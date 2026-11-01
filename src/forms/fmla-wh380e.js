@@ -1,6 +1,6 @@
 // U.S. DOL Form WH-380-E — Certification of Health Care Provider for Employee's Serious Health
 // Condition (FMLA). Fillable PDF: we fill its own fields, which stay editable.
-import { Filler, fullName, providerInfo } from '../lib/pdf.js';
+import { Filler, fullName, providerInfo, us } from '../lib/pdf.js';
 
 const allText = c => [c.history.social, ...c.encounters.flatMap(e => [e.chiefComplaint, e.subjective, e.assessment, e.plan])].join('\n');
 
@@ -63,6 +63,7 @@ export default {
 
   async fill({ templateBytes, chart, ai = {}, settings }) {
     const f = await Filler.open(templateBytes, this.id);
+    f.header = `${this.title} — ${fullName(chart.patient)}, DOB ${us(chart.patient.dob)}`;
     const pv = providerInfo(chart, settings);
     const T = (n, v, src, opts) => f.setText(n, v, { source: src, ...opts });
     const A = 'ai', C = 'chart', S = 'settings';

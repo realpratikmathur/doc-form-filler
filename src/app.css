@@ -25,3 +25,4 @@ th, td { text-align: left; border-bottom: 1px solid #e3e8ef; padding: 4px 6px; v
 td.src-ai { color: #6b3fa0; } td.src-chart { color: #0a7a3d; } td.src-settings { color: #8a5a00; } td.src-doctor { color: #b42318; }
 pre { white-space: pre-wrap; font-size: 11px; max-height: 360px; overflow: auto; background: #f6f8fa; padding: 10px; }
 details { margin-top: 12px; }
+.notice { background: #fff6e0; border: 1px solid #f0c36d; border-radius: 8px; padding: 10px 12px; font-size: 13px; color: #5c4200; }

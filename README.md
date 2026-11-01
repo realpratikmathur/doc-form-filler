@@ -133,7 +133,7 @@ The finished extension is the **`dist`** folder. The last lines of the output sa
 
 **Updating later:**
 1. In the `doc-form-filler` folder, run `git pull`, then `npm run build`.
-2. On `chrome://extensions`, click the **reload** arrow (⟳) on the Doc Form Filler card.
+2. On `chrome://extensions`, click the **reload** arrow (⟳) on the Doc Form Filler card. The version number on the card shows which build is loaded.
 
 ### 2.4 Settings (once per computer)
 
@@ -178,7 +178,7 @@ Hence the BAA recommendation.
 
 Other notes:
 - The API key and settings are stored only in this Chrome profile (`chrome.storage.local`).
-- The extension only has access to `static.practicefusion.com` (to read the open chart) and `api.anthropic.com` (only when AI is on).
+- The extension only has access to `static.practicefusion.com` (to read the open chart) and `api.anthropic.com` (only when AI is on). It also uses Chrome's downloads permission so **Download PDF** can save the file.
 - The extension uses Practice Fusion's own, **undocumented** web endpoints, the same ones its screens use. A future Practice Fusion update could break reading the chart until the extension is updated. Check Practice Fusion's terms of use for your practice.
 
 ---

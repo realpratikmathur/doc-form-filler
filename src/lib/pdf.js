@@ -6,6 +6,8 @@
 import { PDFDocument, StandardFonts, rgb, PDFName } from 'pdf-lib';
 
 const BLUE = rgb(0.05, 0.2, 0.6);
+const MIN_FONT = 7;            // never shrink text below this; overflow goes to a continuation page
+const MORE = ' … (see continuation page)';
 
 export class Filler {
   static async open(templateBytes, formId) {
@@ -19,6 +21,8 @@ export class Filler {
     this.form = pdf.getForm();
     this.rows = [];        // what was filled, from where — shown to the doctor for review
     this.names = new Set();
+    this.continued = [];   // [{label, text}] — text too long for its box, printed in full on an added page
+    this.header = '';      // shown at the top of continuation pages (form + patient)
   }
 
   /** Record a value for the review list. source: 'chart' | 'ai' | 'settings' | 'doctor' */
@@ -37,15 +41,22 @@ export class Filler {
     let size = 9;
     if (H >= 28) {
       tf.enableMultiline();
-      while (size > 6 && this.#lineCount(text, size, W) * size * 1.15 > H - 2) size -= 0.5;
+      const fit = this.#fitBox(text, label, W, H, 9);
+      text = fit.text; size = fit.size;
     } else if (this.font.widthOfTextAtSize(text, size) > W) {
       if (overflowInto) {
         const words = text.split(' '); let head = '';
         while (words.length && this.font.widthOfTextAtSize(`${head} ${words[0]}`.trim(), size) <= W) head = `${head} ${words.shift()}`.trim();
-        this.form.getTextField(overflowInto).setText(words.join(' '));
+        const rest = words.join(' ');
+        const of = this.form.getTextField(overflowInto);
+        const rr = of.acroField.getWidgets()[0].getRectangle();
+        const fit = this.#fitLine(rest, label, rr.width - 4, 9);
+        of.setText(fit.text); of.setFontSize(fit.size);
         text = head;
+      } else {
+        const fit = this.#fitLine(text, label, W, 9);
+        text = fit.text; size = fit.size;
       }
-      while (size > 6 && this.font.widthOfTextAtSize(text, size) > W) size -= 0.25;
     }
     tf.setText(text);
     tf.setFontSize(size);
@@ -85,16 +96,14 @@ export class Filler {
    * Add an editable text box. (x, y) is the bottom-left corner in PDF points (1/72 inch).
    * Single-line boxes shrink the font to fit; multiline boxes wrap and shrink.
    */
-  addText(pageNo, x, y, width, height, value, { label, source, size = 9, multiline = height >= 20, optional } = {}) {
-    const text = value == null ? '' : String(value);
+  addText(pageNo, x, y, width, height, value, { label, source, size = 9, multiline = height >= 20, optional, minSize = MIN_FONT } = {}) {
+    const fit = multiline ? this.#fitBox(value == null ? '' : String(value), label, width - 4, height, size, minSize)
+      : this.#fitLine(value == null ? '' : String(value), label, width - 4, size, minSize);
     const tf = this.form.createTextField(this.#uniqueName(label));
-    tf.setText(text);
+    tf.setText(fit.text);
     if (multiline) tf.enableMultiline();
-    let s = size;
-    if (multiline) while (s > 5.5 && this.#lineCount(text, s, width - 4) * s * 1.17 > height - 2) s -= 0.25;
-    else while (s > 5.5 && this.font.widthOfTextAtSize(text, s) > width - 4) s -= 0.25;
     tf.addToPage(this.pdf.getPage(pageNo - 1), { x, y, width, height, font: this.font, textColor: BLUE, backgroundColor: undefined, borderColor: undefined, borderWidth: 0 });
-    tf.setFontSize(s);
+    tf.setFontSize(fit.size);
     this.record(label, value, source, { optional });
   }
 
@@ -103,9 +112,7 @@ export class Filler {
    * baselines = y of each printed line (top to bottom). Text wraps across them; font shrinks to fit.
    */
   addLines(pageNo, x, baselines, width, value, { label, source, size = 9, optional } = {}) {
-    const text = value == null ? '' : String(value);
-    let s = size, lines;
-    for (; s >= 6; s -= 0.25) { lines = this.#wrap(text, s, width - 4); if (lines.length <= baselines.length) break; }
+    const { lines, size: s } = this.#fitLines(value == null ? '' : String(value), label, width - 4, baselines.length, size);
     baselines.forEach((y, i) => {
       const tf = this.form.createTextField(this.#uniqueName(`${label} line ${i + 1}`));
       tf.setText(lines[i] || '');
@@ -124,8 +131,69 @@ export class Filler {
   }
 
   async save() {
+    if (this.continued.length) await this.#addContinuationPages();
     this.form.updateFieldAppearances(this.font);
     return this.pdf.save();   // NOT flattened: fields stay editable
+  }
+
+  // ---------- fitting text, with a continuation page instead of unreadable or lost text ----------
+  /** Wrap into at most n lines, shrinking to MIN_FONT; beyond that, truncate and continue later. */
+  #fitLines(text, label, width, n, size, min = MIN_FONT) {
+    let s = size, lines = this.#wrap(text, s, width);
+    while (lines.length > n && s > min) { s = Math.max(min, s - 0.25); lines = this.#wrap(text, s, width); }
+    if (lines.length <= n) return { lines, size: s };
+    this.continued.push({ label, text });
+    const kept = lines.slice(0, n);
+    let last = kept[n - 1];
+    while (last && this.font.widthOfTextAtSize(last + MORE, s) > width) last = last.split(' ').slice(0, -1).join(' ');
+    kept[n - 1] = (last || '') + MORE;
+    return { lines: kept, size: s };
+  }
+
+  /** Multiline box of a given height: like #fitLines, with the line count derived from the height. */
+  #fitBox(text, label, width, height, size, min = MIN_FONT) {
+    let s = size;
+    while (s > min && this.#lineCount(text, s, width) * s * 1.17 > height - 2) s = Math.max(min, s - 0.25);
+    const n = Math.max(1, Math.floor((height - 2) / (s * 1.17)));
+    const { lines, size: fs } = this.#fitLines(text, label, width, n, s, min);
+    return { text: lines.join(' '), size: fs };
+  }
+
+  /** Single line: shrink to MIN_FONT, then truncate and continue later. */
+  #fitLine(text, label, width, size, min = MIN_FONT) {
+    let s = size;
+    while (s > min && this.font.widthOfTextAtSize(text, s) > width) s = Math.max(min, s - 0.25);
+    if (this.font.widthOfTextAtSize(text, s) <= width) return { text, size: s };
+    this.continued.push({ label, text });
+    let t = text;
+    while (t && this.font.widthOfTextAtSize(t + MORE, s) > width) t = t.split(' ').slice(0, -1).join(' ');
+    return { text: (t || '') + MORE, size: s };
+  }
+
+  async #addContinuationPages() {
+    const bold = await this.pdf.embedFont(StandardFonts.HelveticaBold);
+    const W = 540, X = 36, SIZE = 9, LEAD = SIZE * 1.2;
+    let page = null, y = 0, n = 0;
+    const newPage = () => {
+      page = this.pdf.addPage([612, 792]); n++;
+      page.drawText(`Continuation page${n > 1 ? ` ${n}` : ''}`, { x: X, y: 750, size: 13, font: bold });
+      if (this.header) page.drawText(this.header, { x: X, y: 733, size: 9, font: this.font });
+      y = 712;
+    };
+    newPage();
+    for (const { label, text } of this.continued) {
+      const wrapped = String(text).split(/\n+/).flatMap(par => this.#wrap(par, SIZE, W - 16));
+      const h = wrapped.length * LEAD + 8;
+      if (y - 14 - h < 40) newPage();
+      page.drawText(`${label} (continued)`, { x: X, y, size: 10, font: bold });
+      y -= 6;
+      const tf = this.form.createTextField(this.#uniqueName(`${label} continued`));
+      tf.setText(wrapped.join('\n'));
+      tf.enableMultiline();
+      tf.addToPage(page, { x: X, y: y - h, width: W, height: h, font: this.font, textColor: BLUE, backgroundColor: undefined, borderColor: rgb(0.75, 0.78, 0.82), borderWidth: 0.5 });
+      tf.setFontSize(SIZE);
+      y -= h + 18;
+    }
   }
 
   #wrap(text, size, width) {

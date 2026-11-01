@@ -79,6 +79,7 @@ export default {
 
   async fill({ templateBytes, chart, ai = {}, settings }) {
     const f = await Filler.open(templateBytes, this.id);
+    f.header = `${this.title} — ${fullName(chart.patient)}, DOB ${us(chart.patient.dob)}`;
     const pv = providerInfo(chart, settings);
     const A = 'ai', C = 'chart', S = 'settings';
     const h = chart.history;
@@ -101,16 +102,19 @@ export default {
     T(1, 350, 576, 128, 14, 'Accompanied by', [ai.accompanied_by, A]);
     T(1, 76, 548, 160, 14, 'SSN', [chart.patient.ssn, C]);
     T(1, 320, 548, 158, 14, 'Guardian', [guardian ? `${guardian.firstName} ${guardian.lastName} ${guardian.phone}`.trim() : '', C]);
-    const etiology = ai.etiology_checks || (chart.diagnoses.some(d => /^Q90/.test(d.icd10 || '')) ? ['Down Syndrome'] : null);
-    checks('Etiology of disability', ETIOLOGY, etiology, ai.etiology_checks ? A : C);
+    // The chart's own coded diagnosis counts even if the AI step is off or returns nothing.
+    const fromChart = chart.diagnoses.some(d => d.active && /^Q90/.test(d.icd10 || '')) ? ['Down Syndrome'] : [];
+    const etiology = [...new Set([...(ai.etiology_checks || []), ...fromChart])];
+    checks('Etiology of disability', ETIOLOGY, etiology, (ai.etiology_checks || []).length ? A : C);
     T(1, 376, 383, 100, 13, 'Etiology: other/unknown', [ai.etiology_other, A], { optional: !(ai.etiology_checks || []).includes('Other/Unknown') });
     const dx = chart.diagnoses.filter(d => d.active).map(d => `${d.name.split(/,| \(/)[0]} (${d.icd10})`);
     [[82, 304], [82, 290], [82, 275], [306, 304], [306, 290], [306, 275]].forEach(([x, y], i) => T(1, x, y, i < 3 ? 184 : 230, 13, `Known diagnosis ${i + 1}`, [dx[i] || '', C], { size: 8.5, optional: i > 0 }));
-    const abbr = s => String(s || '').replace(/Take 1 (tablet|capsule) by mouth/i, '1 $1 PO').replace(/twice daily/i, 'BID').replace(/three times daily/i, 'TID').replace(/once daily/i, 'daily')
-      .replace(/every morning on an empty stomach/i, 'qAM, empty stomach').replace(/at bedtime/i, 'qHS');
-    const meds = chart.medications.filter(m => m.active).map(m => `${m.name.replace(/ Oral (Tablet|Capsule)/, '')} - ${abbr(m.sig)}`);
-    [214, 199, 185, 171, 156].forEach((y, i) => T(1, 82, y - 4, 184, 13, `Medication ${i + 1}`, [meds[i] || '', C], { size: 8, optional: true }));
-    [214, 199, 185, 171, 156].forEach((y, i) => T(1, 310, y - 4, 226, 13, `Medication ${i + 6}`, [meds[i + 5] || '', C], { size: 8, optional: true }));
+    const abbr = s => String(s || '').replace(/Take (\d+) (tablet|capsule)s? by mouth/i, (_, n, f) => `${n} ${f === 'tablet' ? 'tab' : 'cap'} PO`)
+      .replace(/twice daily/i, 'BID').replace(/three times daily/i, 'TID').replace(/once daily/i, 'daily')
+      .replace(/every morning on an empty stomach/i, 'qAM, empty stomach').replace(/at bedtime/i, 'qHS').replace(/ as needed/i, ' PRN');
+    const meds = chart.medications.filter(m => m.active).map(m => `${m.name.replace(/ Oral (Tablet|Capsule)/, '').replace(/\b(MG|MCG|ML|UT|UNIT)\b/g, u => u.toLowerCase())} - ${abbr(m.sig)}`);
+    [214, 199, 185, 171, 156].forEach((y, i) => T(1, 82, y - 4, 184, 13, `Medication ${i + 1}`, [meds[i] || '', C], { size: 8, optional: true, minSize: 6 }));
+    [214, 199, 185, 171, 156].forEach((y, i) => T(1, 310, y - 4, 226, 13, `Medication ${i + 6}`, [meds[i + 5] || '', C], { size: 8, optional: true, minSize: 6 }));
     if (meds.length > 10) f.record('Medications beyond 10 (attach list)', meds.slice(10), C);
 
     // ---- page 2

@@ -6,7 +6,7 @@ import { readFileSync, mkdirSync, writeFileSync, existsSync } from 'node:fs';
 import { PDFDocument } from 'pdf-lib';
 import { FORMS } from '../src/forms/index.js';
 import { generateForm } from '../src/lib/pipeline.js';
-import { toSchema } from '../src/lib/ai.js';
+import { toSchema, schemaStats, SCHEMA_LIMITS } from '../src/lib/ai.js';
 import { cannedAnswers } from './mock-ai.mjs';
 
 const CASES = [['fmla-wh380e', 'angela'], ['metroaccess-partb', 'harold'], ['dds-medeval', 'darnell']];
@@ -39,6 +39,9 @@ for (const [formId, key] of CASES) {
 
   // schema + fixture keys
   try { checkSchema(toSchema(form.aiFields)); ok(true, 'AI JSON schema meets structured-output rules'); } catch (e) { ok(false, e.message); }
+  const st = schemaStats(toSchema(form.aiFields));
+  ok(st.unionParams <= SCHEMA_LIMITS.unionParams && st.optionalParams <= SCHEMA_LIMITS.optionalParams,
+    `AI schema within API limits: ${st.unionParams} union-typed (max ${SCHEMA_LIMITS.unionParams}), ${st.optionalParams} optional (max ${SCHEMA_LIMITS.optionalParams}), ${st.properties} fields`);
   const fixtureKeys = Object.keys(JSON.parse(readFileSync(new URL(`./fixtures/ai/${formId}.${key}.json`, here), 'utf8')));
   const schemaKeys = Object.keys(form.aiFields);
   ok(fixtureKeys.sort().join() === schemaKeys.sort().join(), 'fixture answers cover exactly the schema fields');

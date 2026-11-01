@@ -1,19 +1,25 @@
 {
   "date_of_evaluation": "10/20/2026",
   "accompanied_by": "[CONTACT_1] (mother/legal guardian)",
-  "etiology_checks": ["Down Syndrome"],
-  "etiology_other": null,
+  "etiology_checks": [
+    "Down Syndrome"
+  ],
+  "etiology_other": "",
   "ppd_result": "PPD 0 mm induration, negative",
   "ppd_date": "10/22/2026",
   "mammogram": "N/A",
-  "mammogram_date": null,
+  "mammogram_date": "",
   "hepB_vaccinated": "Yes",
   "hepB_date": "2010",
   "developmental_history": "Down syndrome (trisomy 21) diagnosed at birth by karyotype. Global developmental delay noted in infancy: walked at 30 months, first words at age 3. WISC-IV 2008 (age 12): FSIQ 48; WAIS-IV 2015 (age 19): FSIQ 51, moderate intellectual disability. Special education through age 21.",
   "hpi": "Annual physical / pre-admission H&P for ICF/IID placement. Last generalized tonic-clonic seizure 03/2026 (~2 min); averages 1-2/year on levetiracetam. Uses CPAP nightly. No recent illness, hospitalizations or ER visits in the past year. Needs verbal cues and supervision for bathing, dressing and hygiene.",
   "past_history": "Secundum ASD surgical repair 1997. Tonsillectomy and adenoidectomy 2002. Epilepsy since 2009. Hypothyroidism since 2012. OSA on CPAP since 2020.",
-  "habits": ["Denied"],
-  "substance": ["Denied"],
+  "habits": [
+    "Denied"
+  ],
+  "substance": [
+    "Denied"
+  ],
   "social_history": "Lives with mother/legal guardian (age 68), whose health is declining; she can no longer provide 24-hour supervision. Attends a day habilitation program 5 days/week. Family requesting ICF/IID placement through DDA.",
   "sexual_history": "Not sexually active.",
   "environmental": "Wanders and has poor safety awareness; needs supervision near traffic, water and the stove.",
@@ -38,8 +44,19 @@
   "lab_hbsag": "Negative (anti-HBs positive)",
   "lab_cholesterol": "TC 188, LDL 112, HDL 44, TG 160",
   "lab_other": "TSH 2.8; levetiracetam 18 mcg/mL; A1c 5.6%",
-  "recommendations": ["Continue levetiracetam 750 mg BID, levothyroxine 100 mcg daily, vitamin D.", "TSH every 6 months; annual audiology and ophthalmology.", "CPAP nightly; seizure precautions.", "Supervision near water, traffic and stove; weight management."],
-  "services": ["Occupational Therapy", "Speech and Language", "Nutrition", "Fitness Training", "Labs"],
+  "recommendations": [
+    "Continue levetiracetam 750 mg BID, levothyroxine 100 mcg daily, vitamin D.",
+    "TSH every 6 months; annual audiology and ophthalmology.",
+    "CPAP nightly; seizure precautions.",
+    "Supervision near water, traffic and stove; weight management."
+  ],
+  "services": [
+    "Occupational Therapy",
+    "Speech and Language",
+    "Nutrition",
+    "Fitness Training",
+    "Labs"
+  ],
   "services_labs": "TSH every 6 months",
-  "services_other": null
+  "services_other": ""
 }

@@ -2,7 +2,7 @@
 // Part B is NOT a fillable PDF, so we add new editable fields on top of the printed blanks.
 // Coordinates are PDF points from the bottom-left of the page (612 x 792), measured from the
 // May 2024 revision (form 50.295 05/24).
-import { Filler, fullName, providerInfo } from '../lib/pdf.js';
+import { Filler, fullName, providerInfo, us } from '../lib/pdf.js';
 
 const allText = c => [c.history.social, ...c.encounters.flatMap(e => [e.chiefComplaint, e.plan])].join('\n');
 
@@ -61,6 +61,7 @@ export default {
 
   async fill({ templateBytes, chart, ai = {}, settings }) {
     const f = await Filler.open(templateBytes, this.id);
+    f.header = `${this.title} — ${fullName(chart.patient)}, DOB ${us(chart.patient.dob)}`;
     const pv = providerInfo(chart, settings);
     const A = 'ai', C = 'chart', S = 'settings';
     // a Yes/No group = one editable checkbox per printed box, the matching one checked

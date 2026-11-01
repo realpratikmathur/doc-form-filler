@@ -61,9 +61,15 @@ function renderForms() {
     list.appendChild(label);
   });
   const aiReady = settings.aiEnabled && settings.anthropicApiKey && settings.model;
-  $('ai-note').textContent = aiReady
-    ? 'Fields from the visit notes will be drafted by Claude using a de-identified copy of the chart (no names, IDs or real dates).'
-    : 'AI is off (no Claude API key in Settings). Fields that come from the visit notes will be left blank for you to type into the PDF.';
+  if (aiReady) {
+    $('ai-note').className = 'muted';
+    $('ai-note').textContent = 'Fields from the visit notes will be drafted by Claude using a de-identified copy of the chart (no names, IDs or real dates).';
+  } else {
+    $('ai-note').className = 'notice';
+    $('ai-note').innerHTML = '<b>AI drafting is off.</b> Only fields stored as data in the chart will be filled (name, DOB, diagnoses, medications, allergies, vitals, history). '
+      + 'Answers that live in the visit notes (exam findings, labs, dates off work, functional limits…) will be left blank for you to type into the PDF. '
+      + 'To have Claude draft them, add an Anthropic API key in <a href="options.html" target="_blank">Settings</a>, then reload this page.';
+  }
   $('form-box').classList.remove('hidden');
 }
 
@@ -128,11 +134,16 @@ function showResult(form, { bytes, rows, aiInfo }) {
 }
 
 function openPdf() { if (lastPdf) chrome.tabs.create({ url: lastPdf.url }); }
-function downloadPdf() {
+async function downloadPdf() {
   if (!lastPdf) return;
-  const a = document.createElement('a');
-  a.href = lastPdf.url; a.download = lastPdf.filename;
-  document.body.appendChild(a); a.click(); a.remove();
+  try {
+    // Chrome's downloads API: respects the doctor's "Ask where to save each file" setting.
+    window.__lastDownloadId = await chrome.downloads.download({ url: lastPdf.url, filename: lastPdf.filename, conflictAction: 'uniquify' });
+  } catch (e) {
+    const a = document.createElement('a');   // fallback: plain link download
+    a.href = lastPdf.url; a.download = lastPdf.filename;
+    document.body.appendChild(a); a.click(); a.remove();
+  }
 }
 
 $('generate').addEventListener('click', generate);

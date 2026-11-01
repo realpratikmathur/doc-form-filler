@@ -132,14 +132,19 @@ for (const c of CASES) {
   await viewer.close();
 
   const file = path.join(out, `e2e-${c.form}.pdf`);
-  let name = '';
-  try {
-    const [dl] = await Promise.all([app.waitForEvent('download', { timeout: 20000 }), app.click('#download-pdf')]);
-    await dl.saveAs(file);
-    name = dl.suggestedFilename();
-    ok(true, `"Download PDF" saved "${name}"`);
-  } catch (e) {
-    ok(false, `"Download PDF" button: ${e.message.split('\n')[0]}`);
+  await app.evaluate(() => { window.__lastDownloadId = null; });
+  await app.click('#download-pdf');
+  const done = await app.evaluate(async () => {
+    for (let i = 0; i < 60; i++) {
+      const id = window.__lastDownloadId;
+      if (id != null) { const [d] = await chrome.downloads.search({ id }); if (d && d.state !== 'in_progress') return { state: d.state, filename: d.filename, bytes: d.fileSize, error: d.error }; }
+      await new Promise(r => setTimeout(r, 250));
+    }
+    return { state: 'timeout' };
+  });
+  ok(done.state === 'complete' && done.bytes > 100000, `"Download PDF" saved ${path.basename(done.filename || '')} (${done.state}${done.error ? `, ${done.error}` : ''})`);
+  if (done.state === 'complete') writeFileSync(file, readFileSync(done.filename));
+  else { // still check the PDF itself
     const b64 = await app.evaluate(async () => { const buf = new Uint8Array(await (await fetch(window.__lastPdf.url)).arrayBuffer()); let s = ''; for (const x of buf) s += String.fromCharCode(x); return btoa(s); });
     writeFileSync(file, Buffer.from(b64, 'base64'));
   }
@@ -171,6 +176,7 @@ await app2.waitForSelector('#result-box:not(.hidden)');
 await (await pdfTab2).close();
 ok(sent.length === before, 'nothing was sent to Claude');
 ok(/AI was off/.test(await app2.textContent('#ai-result')), 'page says note-based fields are blank');
+ok(/AI drafting is off/.test(await app2.textContent('#ai-note')), 'warning about AI being off is shown before generating');
 const blanks = await app2.locator('#missing li').count();
 ok(blanks > 10, `${blanks} fields listed as "left blank" for the doctor`);
 

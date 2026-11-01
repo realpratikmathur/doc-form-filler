@@ -7,7 +7,7 @@ const SYSTEM = `You help a physician complete paperwork (disability, leave, and 
 The physician reviews and signs every form, so accuracy matters more than completeness.
 
 Rules:
-- Use only facts documented in the chart JSON. If the chart does not document an answer, return null for that field. Never guess or invent dates, frequencies, or findings.
+- Use only facts documented in the chart JSON. If the chart does not document an answer, leave it empty: an empty string "" for text and choices, false for yes/no, an empty list for lists. Never guess or invent dates, frequencies, or findings.
 - Identifiers were removed. Tokens such as [PATIENT], [CONTACT_1], [EMPLOYER], [ID_1] stand for real values: copy them exactly when you need to refer to that person or thing.
 - All dates in the chart have been shifted by the same unknown offset. Use dates exactly as they appear in the chart and compute intervals from them; never adjust them toward real calendar dates. Write dates as MM/DD/YYYY.
 - Write short, plain clinical phrases suitable for a form box. Respect the length guidance in each field description.
@@ -31,14 +31,36 @@ export function pickDefaultModel(models) {
   return (models.find(m => /opus/i.test(m.id)) || models[0] || {}).id || '';
 }
 
+// Structured outputs allow at most 16 union-typed (nullable) and 24 optional parameters per request,
+// so the schema uses neither: every field is required, and "not documented" is expressed as
+// "" (text/choices), false (yes/no) or [] (lists). Choices therefore always include "".
+export const SCHEMA_LIMITS = { unionParams: 16, optionalParams: 24 };
+
 export function toSchema(fields) {
-  // Every field is nullable so the model can say "not documented" instead of guessing.
   const properties = {};
   for (const [k, f] of Object.entries(fields)) {
-    const base = f.enum ? { type: 'string', enum: f.enum } : f.type === 'array' ? { type: 'array', items: { type: 'string', ...(f.itemsEnum ? { enum: f.itemsEnum } : {}) } } : { type: f.type || 'string' };
-    properties[k] = { anyOf: [base, { type: 'null' }], description: f.description };
+    if (f.enum) properties[k] = { type: 'string', enum: [...f.enum, ''], description: `${f.description} Empty string if not documented.` };
+    else if (f.type === 'array') properties[k] = { type: 'array', items: { type: 'string', ...(f.itemsEnum ? { enum: f.itemsEnum } : {}) }, description: `${f.description} Empty list if none documented.` };
+    else if (f.type === 'boolean') properties[k] = { type: 'boolean', description: `${f.description} false if not documented.` };
+    else properties[k] = { type: 'string', description: `${f.description} Empty string if not documented.` };
   }
   return { type: 'object', properties, required: Object.keys(fields), additionalProperties: false };
+}
+
+/** Count what the API's structured-output limits count (used by the tests). */
+export function schemaStats(schema) {
+  let unionParams = 0, optionalParams = 0, properties = 0;
+  const walk = node => {
+    if (!node || typeof node !== 'object') return;
+    if (node.anyOf || Array.isArray(node.type)) unionParams++;
+    if (node.type === 'object' && node.properties) {
+      for (const [k, v] of Object.entries(node.properties)) { properties++; if (!(node.required || []).includes(k)) optionalParams++; walk(v); }
+    }
+    if (node.items) walk(node.items);
+    (node.anyOf || []).forEach(walk);
+  };
+  walk(schema);
+  return { unionParams, optionalParams, properties };
 }
 
 export class AiError extends Error {}
