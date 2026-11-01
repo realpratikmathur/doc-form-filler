@@ -9,7 +9,7 @@ import { generateForm } from '../src/lib/pipeline.js';
 import { toSchema, schemaStats, SCHEMA_LIMITS } from '../src/lib/ai.js';
 import { cannedAnswers } from './mock-ai.mjs';
 
-const CASES = [['fmla-wh380e', 'angela'], ['metroaccess-partb', 'harold'], ['dds-medeval', 'darnell']];
+const CASES = [['fmla-wh380e', 'angela'], ['fmla-wh380f', 'gloria'], ['metroaccess-partb', 'harold'], ['dds-medeval', 'darnell']];
 const SETTINGS = { credentials: 'MD', specialty: 'Internal Medicine', licenseNumber: 'MD-0000000 / DC (example)', npi: '', fax: '(301) 555-0100', providerName: '', phoneOverride: '' };
 const here = new URL('.', import.meta.url);
 const out = new URL('./out/', here);
@@ -46,6 +46,8 @@ for (const [formId, key] of CASES) {
   const schemaKeys = Object.keys(form.aiFields);
   ok(fixtureKeys.sort().join() === schemaKeys.sort().join(), 'fixture answers cover exactly the schema fields');
   ok(form.suggest(chart), `form is suggested for this chart ("${form.suggest(chart)}")`);
+  const others = FORMS.filter(f2 => f2.id !== form.id && f2.suggest(chart)).map(f2 => f2.id);
+  ok(!others.length, `no other form is suggested for this chart${others.length ? ` (also: ${others.join(', ')})` : ''}`);
 
   for (const mode of ['ai', 'no-ai']) {
     let sentPayload = null;
@@ -76,6 +78,7 @@ for (const [formId, key] of CASES) {
     if (mode === 'ai') {
       const all = rows.map(r => r.value).join(' | ');
       const expect = { 'fmla-wh380e': ['Angela R Brooks', '10/06/2026', '11/30/2026', '10/26/2026'], 'metroaccess-partb': ['Harold T Simmons', 'Walker; Portable Oxygen', 'Long-Term'],
+        'fmla-wh380f': ['Marcus Bell', 'Gloria M Bell', '09/14/2026', '10/10/2026', '12/31/2026', '12/10/2026'],
         'dds-medeval': ['Darnell J Jenkins', '05/02/1996', 'Loretta Jenkins', '10/20/2026', '10/22/2026', '61 in', '118/76'] }[formId];
       const missingVals = expect.filter(v => !all.includes(v));
       ok(!missingVals.length, `real names and real dates restored in the PDF${missingVals.length ? ` (missing: ${missingVals.join(', ')})` : ''}`);

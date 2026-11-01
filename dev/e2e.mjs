@@ -28,6 +28,7 @@ if (!existsSync(path.join(dist, 'manifest.json'))) { console.error('Run "npm run
 
 const CASES = [
   { form: 'fmla-wh380e', patient: ['Angela', 'Brooks'], key: 'angela', expect: ['Angela R Brooks', '10/06/2026'] },
+  { form: 'fmla-wh380f', patient: ['Gloria', 'Bell'], key: 'gloria', expect: ['Marcus Bell', 'Gloria M Bell', '09/14/2026'] },
   { form: 'metroaccess-partb', patient: ['Harold', 'Simmons'], key: 'harold', expect: ['Harold T Simmons', 'Furosemide'] },
   { form: 'dds-medeval', patient: ['Darnell', 'Jenkins'], key: 'darnell', expect: ['Darnell J Jenkins', '05/02/1996', 'Loretta Jenkins'] },
 ];

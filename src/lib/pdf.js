@@ -3,7 +3,7 @@
 //  - on flat PDFs (e.g. MetroAccess Part B, DC DDS) we ADD new text fields / checkboxes on top
 //    of the printed blanks, so the doctor can click into any box in Chrome's PDF viewer (or
 //    Acrobat) and change it before printing or saving.
-import { PDFDocument, StandardFonts, rgb, PDFName } from 'pdf-lib';
+import { PDFDocument, StandardFonts, rgb, PDFName, PDFTextField } from 'pdf-lib';
 
 const BLUE = rgb(0.05, 0.2, 0.6);
 const MIN_FONT = 7;            // never shrink text below this; overflow goes to a continuation page
@@ -78,6 +78,26 @@ export class Filler {
     this.record(label, hit ? option : '', source, { optional });
   }
 
+  /**
+   * Some government PDFs put two questions' boxes in ONE field (e.g. WH-380-F "The patient" holds both
+   * "has been / is expected to be" and "was / will be"). Tick one widget per question independently.
+   * picks = [{ option, label, source, optional }]; an option of '' / null leaves that question unticked.
+   */
+  chooseEach(name, picks) {
+    const af = this.form.getField(name).acroField;
+    const wanted = new Set(picks.map(p => p.option).filter(Boolean));
+    let first = null;
+    for (const w of af.getWidgets()) {
+      const on = w.getOnValue();
+      const onName = on ? (on.decodeText ? on.decodeText() : String(on).replace(/^\//, '')) : '';
+      const match = wanted.has(onName);
+      w.setAppearanceState(match ? on : PDFName.of('Off'));
+      if (match && !first) first = on;
+    }
+    af.dict.set(PDFName.of('V'), first || PDFName.of('Off'));
+    for (const p of picks) this.record(p.label, p.option || '', p.source, { optional: p.optional });
+  }
+
   check(name, on, { label = name, source } = {}) {
     const cb = this.form.getCheckBox(name);
     on ? cb.check() : cb.uncheck();
@@ -132,8 +152,10 @@ export class Filler {
 
   async save() {
     if (this.continued.length) await this.#addContinuationPages();
-    this.form.updateFieldAppearances(this.font);
-    return this.pdf.save();   // NOT flattened: fields stay editable
+    // Redraw only text boxes. The government PDFs' own checkboxes keep their original drawings: letting
+    // pdf-lib regenerate them adds a default box slightly offset from the printed one (double edges).
+    for (const f of this.form.getFields()) if (f instanceof PDFTextField) f.updateAppearances(this.font);
+    return this.pdf.save({ updateFieldAppearances: false });   // NOT flattened: fields stay editable
   }
 
   // ---------- fitting text, with a continuation page instead of unreadable or lost text ----------

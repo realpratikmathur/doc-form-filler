@@ -5,6 +5,7 @@ A Chrome extension that pre-fills a doctor's paperwork from the patient chart th
 | Form | Who it's for | Pages filled |
 |---|---|---|
 | **FMLA WH-380-E** (U.S. Dept. of Labor) | Employee's own serious health condition | Section II, pages 2–4 |
+| **FMLA WH-380-F** (U.S. Dept. of Labor) | A family member (e.g. a son) needs leave to care for this patient | Section III, pages 2–4 |
 | **WMATA MetroAccess, Part B** | Paratransit eligibility, health care provider certification | Part B, pages 5–8 |
 | **DC DDS / DDA Medical Evaluation Form** | Annual physical / intake for DC Developmental Disabilities Administration | All 4 pages |
 
@@ -50,7 +51,7 @@ Clicking the extension's icon in Chrome's toolbar does the same thing.
 ### Step 4. Choose the form and click **Generate filled PDF**
 
 1. A new tab called **Doc Form Filler** opens and reads the chart in about a second. It shows the patient's name, DOB and PRN so you can confirm it's the right person.
-2. Under **1. Choose a form**, the form that matches the chart is already selected and marked *Suggested*. For example, it picks FMLA when your note mentions FMLA. Pick a different one if needed.
+2. Under **1. Choose a form**, the form that matches the chart is already selected and marked *Suggested*. For example, it picks WH-380-E when your note mentions FMLA for the patient's own condition, and WH-380-F when the FMLA is for a relative caring for the patient. The relative listed as next of kin in the chart's Profile becomes the "Employee". If no form matches, nothing is pre-selected and you choose one.
 3. Click **2. Generate filled PDF**. With AI turned on this takes a few seconds; without AI it's instant.
 
 ![Choosing a form](docs/img/03-filler-choose-form.png)
@@ -219,13 +220,19 @@ dev/seed/              creates the synthetic test patients in a Practice Fusion 
 dev/pf-session.mjs     shared Practice Fusion login helper for the dev scripts
 ```
 
-Run the offline test. It fills every form from the synthetic charts with and without AI, then checks four things: no identifiers reach the AI, the schema is valid, real dates are restored, and every field is editable.
+Run the offline test. It fills every form from the synthetic charts with and without AI, then checks four things: no identifiers reach the AI, the schema is valid and within Anthropic's structured-output limits, real dates are restored, and every field is editable.
 
 ```bash
 npm run build && npm test
 ```
 
-The end-to-end test loads the built extension into Chromium, logs in to a Practice Fusion **test** account, opens the synthetic patients, clicks the button, and generates each form with the Claude API **mocked**. It needs Playwright (`npm i -D playwright && npx playwright install chromium`).
+The offline end-to-end test loads the **built extension** into Chromium against a stand-in Practice Fusion page that serves the synthetic charts. It needs no login, security code or API key. It needs Playwright (`npm i -D playwright && npx playwright install chromium`).
+
+```bash
+npm run build && npm run e2e:offline
+```
+
+The live end-to-end test loads the built extension into Chromium, logs in to a Practice Fusion **test** account, opens the synthetic patients, clicks the button, and generates each form with the Claude API **mocked**. It needs Playwright (`npm i -D playwright && npx playwright install chromium`).
 
 ```bash
 PF_EMAIL=you@example.com PF_PASSWORD='…' npm run e2e

@@ -14,8 +14,9 @@ export default {
 
   suggest(chart) {
     const t = allText(chart);
-    if (/\bFMLA\b|family (and )?medical leave|WH-380/i.test(t) && !/caregiver|care for (his|her) (mother|father|parent|child|spouse)/i.test(t)) return 'The notes mention FMLA paperwork.';
-    if (/off work|unable to work|return to work/i.test(t)) return 'The notes mention time off work.';
+    const caregiverCase = /caregiver|to care for|care for (him|her|his|the patient)/i.test(t);
+    if (/\bFMLA\b|family (and )?medical leave|WH-380/i.test(t) && !caregiverCase) return 'The notes mention FMLA paperwork.';
+    if (/off work|unable to work|return to work/i.test(t) && !caregiverCase) return 'The notes mention time off work.';
     return null;
   },
 

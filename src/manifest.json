@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Doc Form Filler",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Pre-fills FMLA, MetroAccess and DC DDS forms from the Practice Fusion chart you have open. You review and sign.",
   "icons": {
     "16": "icons/icon16.png",

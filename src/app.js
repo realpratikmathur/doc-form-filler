@@ -54,7 +54,7 @@ function renderForms() {
   suggestions.forEach(({ f, why }, i) => {
     const label = document.createElement('label');
     label.className = 'form-option';
-    label.innerHTML = `<input type="radio" name="form" value="${f.id}" ${i === 0 ? 'checked' : ''}><b></b><span class="why"></span><span class="note"></span>`;
+    label.innerHTML = `<input type="radio" name="form" value="${f.id}" ${i === 0 && why ? 'checked' : ''}><b></b><span class="why"></span><span class="note"></span>`;
     label.querySelector('b').textContent = f.title;
     label.querySelector('.why').textContent = why ? `Suggested: ${why}` : '';
     label.querySelector('.note').textContent = f.note || '';
@@ -70,11 +70,21 @@ function renderForms() {
       + 'Answers that live in the visit notes (exam findings, labs, dates off work, functional limits…) will be left blank for you to type into the PDF. '
       + 'To have Claude draft them, add an Anthropic API key in <a href="options.html" target="_blank">Settings</a>, then reload this page.';
   }
+  if (!suggestions.some(x => x.why)) {
+    const p = document.createElement('p'); p.className = 'notice';
+    p.textContent = 'No form matched this chart automatically. Choose the form you need.';
+    list.prepend(p);
+  }
+  const sync = () => { $('generate').disabled = !document.querySelector('input[name="form"]:checked'); };
+  list.querySelectorAll('input[name="form"]').forEach(r => r.addEventListener('change', sync));
+  sync();
   $('form-box').classList.remove('hidden');
 }
 
 async function generate() {
-  const form = formById(document.querySelector('input[name="form"]:checked').value);
+  const picked = document.querySelector('input[name="form"]:checked');
+  if (!picked) return;
+  const form = formById(picked.value);
   $('generate').disabled = true;
   $('result-box').classList.add('hidden');
   try {
@@ -116,7 +126,15 @@ function showResult(form, { bytes, rows, aiInfo }) {
     items.forEach(r => { const li = document.createElement('li'); li.textContent = r.label; ul.appendChild(li); });
     $('missing').append(h, ul);
   };
-  add(`Left blank — not found in the chart (fill in the PDF if they apply): ${missing.length}`, missing);
+  const fromSettings = missing.filter(r => r.source === 'settings');
+  const fromChart = missing.filter(r => r.source !== 'settings');
+  if (fromSettings.length) {
+    const p = document.createElement('p'); p.className = 'notice';
+    p.innerHTML = '<b>Your details are missing:</b> <span></span>. Add them once in <a href="options.html" target="_blank">Settings</a>, then click Generate again (or type them into the PDF).';
+    p.querySelector('span').textContent = fromSettings.map(r => r.label.replace(/^Type of practice \/ /, '')).join(', ');
+    $('missing').appendChild(p);
+  }
+  add(`Left blank — not found in the chart (fill in the PDF if they apply): ${fromChart.length}`, fromChart);
   add('For you to complete by hand:', doctor);
 
   const tbody = $('rows').querySelector('tbody');
