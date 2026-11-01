@@ -1,0 +1,161 @@
+{
+  "extractedAt": "2026-11-01T16:52:54.415Z",
+  "patient": {
+    "firstName": "Darnell",
+    "middleName": "J",
+    "lastName": "Jenkins",
+    "dob": "1996-05-02",
+    "sex": "Male",
+    "prn": "JD855834",
+    "ssn": "",
+    "address": {
+      "streetAddress1": "4610 Benning Rd SE",
+      "streetAddress2": "Apt 304",
+      "city": "Washington",
+      "state": "DC",
+      "postalCode": "20019",
+      "notes": ""
+    },
+    "homePhone": "(202) 555-0126",
+    "email": "darnell.jenkins.fake@example.com",
+    "chartNote": "DC Medicaid ID: 70987654 (fake). Legal guardian: mother Loretta Jenkins (202) 555-0126. DDA service coordinator: T. Morgan (fake)."
+  },
+  "contacts": [
+    {
+      "firstName": "Loretta",
+      "lastName": "Jenkins",
+      "relationship": "Guardian",
+      "phone": "(202) 555-0126"
+    }
+  ],
+  "provider": {
+    "name": "Pratik Mathur",
+    "phone": "202-555-0100",
+    "email": "doctor@example.com",
+    "practice": "Pratik Mathur Practice",
+    "address1": "1234 byrd lane",
+    "address2": "",
+    "city": "Washington",
+    "state": "DC",
+    "zip": "20010"
+  },
+  "diagnoses": [
+    {
+      "icd10": "Q90.9",
+      "name": "Down syndrome, unspecified",
+      "acuity": "Chronic",
+      "active": true,
+      "start": "1996-05-02",
+      "stop": null
+    },
+    {
+      "icd10": "F71",
+      "name": "Moderate intellectual disabilities",
+      "acuity": "Chronic",
+      "active": true,
+      "start": "2001-09-01",
+      "stop": null
+    },
+    {
+      "icd10": "G40.909",
+      "name": "Epilepsy, unspecified, not intractable, without status epilepticus",
+      "acuity": "Chronic",
+      "active": true,
+      "start": "2009-03-01",
+      "stop": null
+    },
+    {
+      "icd10": "E03.9",
+      "name": "Hypothyroidism, unspecified",
+      "acuity": "Chronic",
+      "active": true,
+      "start": "2012-01-01",
+      "stop": null
+    },
+    {
+      "icd10": "G47.33",
+      "name": "Obstructive sleep apnea (adult) (pediatric)",
+      "acuity": "Chronic",
+      "active": true,
+      "start": "2020-05-01",
+      "stop": null
+    },
+    {
+      "icd10": "E66.9",
+      "name": "Obesity, unspecified",
+      "acuity": "Chronic",
+      "active": true,
+      "start": "2018-01-01",
+      "stop": null
+    }
+  ],
+  "medications": [
+    {
+      "name": "levETIRAcetam 750 MG Oral Tablet",
+      "sig": "Take 1 tablet by mouth twice daily",
+      "start": "2015-01-01",
+      "stop": null,
+      "active": true
+    },
+    {
+      "name": "Levothyroxine Sodium 100 MCG Oral Tablet",
+      "sig": "Take 1 tablet by mouth every morning on an empty stomach",
+      "start": "2019-01-01",
+      "stop": null,
+      "active": true
+    },
+    {
+      "name": "Cholecalciferol 50 MCG (2000 UT) Oral Tablet",
+      "sig": "Take 1 tablet by mouth once daily",
+      "start": "2021-01-01",
+      "stop": null,
+      "active": true
+    }
+  ],
+  "allergies": [
+    {
+      "allergen": "Penicillins",
+      "severity": "Moderate",
+      "reactions": [
+        "Hives"
+      ],
+      "active": true
+    }
+  ],
+  "noKnownAllergies": false,
+  "history": {
+    "majorEvents": "Secundum atrial septal defect surgical repair 1997 (Children\u2019s National). Tonsillectomy and adenoidectomy 2002. Last generalized tonic-clonic seizure 03/2026; averages 1-2 per year.",
+    "ongoingProblems": "Down syndrome; moderate intellectual disability; epilepsy; hypothyroidism; obstructive sleep apnea on CPAP; obesity.",
+    "preventiveCare": "Hepatitis B vaccine series completed 2010 (3 doses); anti-HBs positive 10/20/2026. Influenza vaccine 10/2026. PPD placed 10/20/2026, read 10/22/2026: 0 mm induration, negative. Annual audiology and ophthalmology recommended.",
+    "social": "Lives with mother and court-appointed legal guardian Loretta Jenkins (age 68). Attends day habilitation program 5 days/week. Mother has worsening health and can no longer provide 24-hour supervision; family requesting ICF/IID placement through DDA. Denies tobacco, alcohol and drug use. Not sexually active. Environmental concern: wanders, poor safety awareness, needs supervision near traffic and stove.",
+    "developmental": "Down syndrome (trisomy 21) diagnosed at birth by karyotype. Global developmental delay noted in infancy: walked at 30 months, first words at age 3. Psychological evaluation (WISC-IV) 2008 at age 12: Full Scale IQ 48. Repeat WAIS-IV 2015 at age 19: FSIQ 51, moderate intellectual disability. Special education through age 21 (DCPS certificate of completion 2017).",
+    "family": ""
+  },
+  "vitals": [
+    {
+      "date": "2026-10-20",
+      "height_in": 61,
+      "weight_lb": 186,
+      "bmi": 35.1,
+      "bp": "118/76",
+      "temp_f": 97.9,
+      "pulse": 68,
+      "resp_rate": 14,
+      "o2_sat": 96
+    }
+  ],
+  "encounters": [
+    {
+      "date": "2026-10-20",
+      "type": "SOAP Note",
+      "signed": false,
+      "chiefComplaint": "Annual physical / pre-admission H&P for ICF/IID placement",
+      "subjective": "30 y/o M with Down syndrome, moderate intellectual disability and epilepsy, accompanied by mother/guardian. Here for annual physical and paperwork for DDA ICF/IID placement.\nLast seizure 03/2026 (generalized tonic-clonic, ~2 minutes). Adherent to levetiracetam with mother administering. Uses CPAP nightly. No recent illness, hospitalizations or ER visits in past year.\nFunction: needs verbal cues and supervision for bathing, dressing and hygiene. Cannot manage money, medications, cooking or travel independently. Speaks in 2-3 word phrases. Poor safety awareness; has wandered from home twice this year.",
+      "objective": "Gen: short stature, features of trisomy 21 (upslanting palpebral fissures, flat nasal bridge, single palmar crease). Cooperative.\nHEENT: epicanthal folds, Brushfield spots, macroglossia, dentition fair. Neck: supple, thyroid not enlarged.\nChest: clear to auscultation. CV: RRR, no murmur, well-healed sternotomy scar. Abdomen: obese, soft, non-tender, no masses.\nGU: normal male, testes descended bilaterally. Prostate exam not done. Skin: dry skin, mild xerosis of hands. Extremities: no edema, pes planus. Lymph: no adenopathy.\nNeuro: CN II-XII grossly intact, mild generalized hypotonia, broad-based but steady gait, strength 5/5 throughout.\nLabs 10/20/2026: CBC normal (WBC 5.8, Hgb 14.1, Plt 210). CMP normal (Cr 0.9, ALT 22). TSH 2.8. Levetiracetam level 18 mcg/mL (therapeutic). Lipids: TC 188, LDL 112, HDL 44, TG 160. HbA1c 5.6%. HBsAg negative, anti-HBs positive. RPR non-reactive. UA normal.\nPPD placed 10/20/2026, read 10/22/2026: 0 mm, negative.",
+      "assessment": "Down syndrome (Q90.9) with moderate intellectual disability (F71), onset before age 22.\nEpilepsy, controlled (G40.909).\nHypothyroidism, euthyroid on replacement (E03.9).\nOSA on CPAP (G47.33). Obesity, BMI 35 (E66.9).\nRequires ICF/IID level of care: 24-hour supervision, active treatment, assistance with self-care, self-direction, capacity for independent living, and health and safety.",
+      "plan": "Continue levetiracetam 750 mg BID, levothyroxine 100 mcg daily, vitamin D.\nRecommended clinical services: speech and language therapy, occupational therapy, nutrition (weight management), fitness training.\nTSH every 6 months; annual audiology and ophthalmology; CPAP nightly; seizure precautions; supervision near water, traffic and stove.\nDDS Medical Evaluation form and ICF/IID physician certification to be completed.",
+      "simpleNote": ""
+    }
+  ],
+  "patientId": "synthetic-darnell"
+}

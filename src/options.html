@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Doc Form Filler — Settings</title>
+  <link rel="stylesheet" href="app.css">
+  <style>
+    label.f { display: block; margin: 10px 0 2px; font-weight: 600; font-size: 14px; }
+    input[type=text], input[type=password], select { width: 100%; max-width: 480px; padding: 8px; font-size: 14px; border: 1px solid #c7d0db; border-radius: 6px; box-sizing: border-box; }
+    .hint { font-size: 12px; color: #5b6876; margin: 2px 0 0; }
+  </style>
+</head>
+<body>
+  <header><h1>📝 Doc Form Filler — Settings</h1></header>
+  <main>
+    <section class="card">
+      <h2>Your details for the forms</h2>
+      <p class="muted">Name, practice address, phone and e-mail come from Practice Fusion automatically. Fill in what Practice Fusion doesn't store. Saved only in this Chrome profile.</p>
+      <label class="f" for="credentials">Credentials after your name</label><input id="credentials" type="text" placeholder="MD">
+      <label class="f" for="specialty">Specialty / type of practice</label><input id="specialty" type="text" placeholder="Internal Medicine">
+      <label class="f" for="licenseNumber">License number / state</label><input id="licenseNumber" type="text" placeholder="MD12345 / DC">
+      <label class="f" for="npi">NPI</label><input id="npi" type="text">
+      <label class="f" for="fax">Office fax</label><input id="fax" type="text" placeholder="(202) 555-0100">
+      <label class="f" for="providerName">Name override (optional)</label><input id="providerName" type="text" placeholder="Leave blank to use the name in Practice Fusion">
+      <p class="hint">Use this if your Practice Fusion user name isn't how you sign forms.</p>
+      <label class="f" for="phoneOverride">Phone override (optional)</label><input id="phoneOverride" type="text" placeholder="Leave blank to use the Practice Fusion office phone">
+    </section>
+
+    <section class="card">
+      <h2>AI drafting of note-based answers (optional)</h2>
+      <p class="muted">Without AI, the extension fills everything that is stored as data in the chart (names, dates, diagnoses with codes,
+        medications, allergies, vitals, contacts) and leaves note-based answers blank. With AI, a <b>de-identified</b> copy of the chart
+        (no names, IDs, addresses, phone numbers, or real dates) is sent to Anthropic's Claude to draft those answers.
+        Use an Anthropic account covered by a HIPAA Business Associate Agreement before using real patient charts.</p>
+      <label><input id="aiEnabled" type="checkbox"> Use Claude to draft note-based answers</label>
+      <label class="f" for="anthropicApiKey">Anthropic API key</label><input id="anthropicApiKey" type="password" placeholder="sk-ant-...">
+      <p class="hint">Create one at console.anthropic.com → API keys. Stored only in this Chrome profile.</p>
+      <label class="f" for="model">Claude model</label>
+      <select id="model"><option value="">— enter the API key, then click "Load models" —</option></select>
+      <button id="load-models" type="button">Load models</button>
+      <p id="model-status" class="hint"></p>
+    </section>
+
+    <button id="save" type="button" class="primary">Save settings</button> <span id="saved" class="muted"></span>
+  </main>
+  <script type="module" src="options.js"></script>
+</body>
+</html>

@@ -1,0 +1,156 @@
+{
+  "extractedAt": "2026-11-01T16:52:52.926Z",
+  "patient": {
+    "firstName": "Angela",
+    "middleName": "R",
+    "lastName": "Brooks",
+    "dob": "1984-03-14",
+    "sex": "Female",
+    "prn": "BA267828",
+    "ssn": "",
+    "address": {
+      "streetAddress1": "1420 Saratoga Ave NE",
+      "streetAddress2": "",
+      "city": "Washington",
+      "state": "DC",
+      "postalCode": "20018",
+      "notes": ""
+    },
+    "mobilePhone": "(202) 555-0143",
+    "email": "angela.brooks.fake@example.com",
+    "chartNote": ""
+  },
+  "contacts": [],
+  "provider": {
+    "name": "Pratik Mathur",
+    "phone": "202-555-0100",
+    "email": "doctor@example.com",
+    "practice": "Pratik Mathur Practice",
+    "address1": "1234 byrd lane",
+    "address2": "",
+    "city": "Washington",
+    "state": "DC",
+    "zip": "20010"
+  },
+  "diagnoses": [
+    {
+      "icd10": "M51.16",
+      "name": "Intervertebral disc disorders with radiculopathy, lumbar region",
+      "acuity": "Acute",
+      "active": true,
+      "start": "2026-10-06",
+      "stop": null
+    },
+    {
+      "icd10": "I10",
+      "name": "Essential (primary) hypertension",
+      "acuity": "Chronic",
+      "active": true,
+      "start": "2019-04-01",
+      "stop": null
+    }
+  ],
+  "medications": [
+    {
+      "name": "Gabapentin 300 MG Oral Capsule",
+      "sig": "Take 1 capsule (300 mg) by mouth three times daily",
+      "start": "2026-10-07",
+      "stop": null,
+      "active": true
+    },
+    {
+      "name": "Cyclobenzaprine HCl 10 MG Oral Tablet",
+      "sig": "Take 1 tablet by mouth at bedtime as needed for muscle spasm",
+      "start": "2026-10-07",
+      "stop": null,
+      "active": true
+    },
+    {
+      "name": "Naproxen 500 MG Oral Tablet",
+      "sig": "Take 1 tablet by mouth twice daily with food",
+      "start": "2026-10-07",
+      "stop": null,
+      "active": true
+    },
+    {
+      "name": "Lisinopril 10 MG Oral Tablet",
+      "sig": "Take 1 tablet by mouth once daily",
+      "start": "2019-04-01",
+      "stop": null,
+      "active": true
+    },
+    {
+      "name": "methylPREDNISolone 4 MG Oral Tablet",
+      "sig": "6-day taper pack as directed",
+      "start": "2026-10-07",
+      "stop": "2026-10-13",
+      "active": false
+    }
+  ],
+  "allergies": [
+    {
+      "allergen": "Sulfa Drugs",
+      "severity": "Moderate",
+      "reactions": [
+        "Hives"
+      ],
+      "active": true
+    }
+  ],
+  "noKnownAllergies": false,
+  "history": {
+    "majorEvents": "MRI lumbar spine 10/15/2026 (DC Imaging Center): L4-L5 left paracentral disc extrusion with impingement of the traversing left L5 nerve root. Mild L5-S1 degenerative disc disease.",
+    "ongoingProblems": "Hypertension (well controlled). Acute lumbar radiculopathy since 10/06/2026.",
+    "preventiveCare": "",
+    "social": "Occupation: full-time USPS city letter carrier (employer: U.S. Postal Service, Northeast Station). Job requires walking 6-8 hours/day, carrying mail satchel up to 35 lb, lifting parcels up to 70 lb, repetitive bending and twisting. Married, 2 children. Never smoker. Alcohol: 1-2 drinks/month. No drug use.",
+    "developmental": "",
+    "family": ""
+  },
+  "vitals": [
+    {
+      "date": "2026-10-07",
+      "height_in": 65,
+      "weight_lb": 168,
+      "bmi": 28,
+      "bp": "138/86",
+      "temp_f": 98.4,
+      "pulse": 88,
+      "resp_rate": 16,
+      "o2_sat": 98
+    },
+    {
+      "date": "2026-10-21",
+      "weight_lb": 167,
+      "bp": "132/84",
+      "temp_f": 98.2,
+      "pulse": 80,
+      "resp_rate": 16,
+      "o2_sat": 99
+    }
+  ],
+  "encounters": [
+    {
+      "date": "2026-10-07",
+      "type": "SOAP Note",
+      "signed": false,
+      "chiefComplaint": "Severe low back pain radiating down left leg since yesterday",
+      "subjective": "42 y/o F letter carrier with acute onset of low back pain on 10/06/2026 while lifting a heavy parcel at work. Pain 8/10, sharp, radiates to the left buttock, posterior thigh and lateral calf to the dorsum of the foot. Numbness of the left great toe. Worse with sitting, bending, coughing.\nUnable to walk her route, unable to stand more than 10 minutes, unable to lift more than 10 lb. Has not worked since 10/06/2026. No bowel or bladder dysfunction, no saddle anesthesia, no fever.",
+      "objective": "Gen: uncomfortable, antalgic gait. Back: left lumbar paraspinal tenderness and spasm, lumbar flexion limited to 30 degrees.\nNeuro: straight leg raise positive on the left at 40 degrees. Decreased light touch sensation in left L5 dermatome. Left EHL and ankle dorsiflexion strength 4/5, otherwise 5/5. Patellar and Achilles reflexes 2+ and symmetric.",
+      "assessment": "Acute left lumbar radiculopathy, suspected L4-L5 disc herniation (M51.16). Work-related onset.\nHypertension, controlled (I10).",
+      "plan": "Methylprednisolone dose pack, gabapentin 300 mg TID, cyclobenzaprine 10 mg qHS, naproxen 500 mg BID with food.\nMRI lumbar spine ordered.\nOff work from 10/06/2026; unable to perform job functions (walking route, lifting, carrying). Re-evaluate in 2 weeks.\nER precautions reviewed for cauda equina symptoms.",
+      "simpleNote": ""
+    },
+    {
+      "date": "2026-10-21",
+      "type": "SOAP Note",
+      "signed": false,
+      "chiefComplaint": "Follow-up low back pain and MRI results; patient requests FMLA paperwork",
+      "subjective": "Pain improved to 6/10 but still radiating to left leg with intermittent numbness. Still unable to walk more than 15 minutes, stand more than 20 minutes, or lift more than 10 lb. Sleeping poorly. Has not returned to work.\nMRI 10/15/2026: L4-L5 left paracentral disc extrusion impinging traversing left L5 nerve root.\nPatient requests FMLA certification for her employer (USPS).",
+      "objective": "Antalgic gait improved. SLR positive on left at 50 degrees. Left EHL 4/5. Sensation decreased left L5 dermatome. Reflexes symmetric.",
+      "assessment": "Left L4-L5 disc extrusion with L5 radiculopathy (M51.16), improving slowly with conservative care.",
+      "plan": "Referral to physical therapy (Capitol Physical Therapy) 2x/week for 6 weeks, 10/26/2026 through 12/04/2026, each visit ~1 hour plus travel.\nReferral to orthopedic spine surgery (Dr. K. Alvarez, DC Spine Associates) consult 11/12/2026 for possible lumbar epidural steroid injection.\nContinue gabapentin, cyclobenzaprine, naproxen.\nContinuous incapacity: unable to work 10/06/2026 through 11/30/2026.\nAnticipate return to work 12/01/2026 on reduced/light duty through 12/31/2026: up to 4 hours/day, 20 hours/week, no lifting over 20 lb, no carrying mail satchel.\nExpect occasional flare-ups after return: up to 2 episodes per month lasting 1-2 days each over the next 6 months.\nFMLA form to be completed. Follow-up 4 weeks.",
+      "simpleNote": ""
+    }
+  ],
+  "patientId": "synthetic-angela"
+}

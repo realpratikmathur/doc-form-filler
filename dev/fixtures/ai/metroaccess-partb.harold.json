@@ -1,0 +1,20 @@
+{
+  "q10_bp_limit": "180/110 (may use his portable oxygen and walker during the assessment)",
+  "q11_seizure": "N/A",
+  "q12_pca": "No",
+  "q13_mobility_aids": "Yes",
+  "q14_aids": ["Walker", "Portable Oxygen"],
+  "q14_other": null,
+  "q15_duration": "Long-Term",
+  "q16_prevents": "Yes",
+  "q16_how": "Severe COPD (FEV1 38% predicted) with oxygen dependence and heart failure: must stop to rest after about 50 feet; O2 saturation falls to 85% with minimal walking. Cannot walk the 3 blocks to the bus stop or 0.8 mile to the rail station, and cannot stand more than 5-10 minutes waiting. Uses a rollator walker and portable oxygen for all travel. Two falls in the past year.",
+  "q17_side_effects": "Yes",
+  "q17_explain": "Furosemide (diuretic) causes urinary urgency for several hours each morning, making long waits and rides without restroom access difficult.",
+  "q18_temperature": "Yes",
+  "q18_explain": "Cold air and hot, humid days trigger COPD exacerbations with severe shortness of breath; cannot wait outdoors at stops in temperature extremes.",
+  "q19_ice_snow": "Yes",
+  "q19_explain": "High fall risk walking with a rollator and oxygen tank on ice or snow; two falls in the past year.",
+  "q20_air_quality": "Yes",
+  "q20_explain": "Poor air-quality days trigger COPD exacerbations. Uses rescue albuterol inhaler as needed; on daily maintenance inhalers. Hospitalized for COPD exacerbations 01/2025 and 02/2026.",
+  "q21_other": "Chronic hypoxic respiratory failure requiring oxygen 2 L/min with exertion; bilateral knee osteoarthritis limiting walking and stairs; lives in a 2nd-floor walk-up (14 stairs)."
+}

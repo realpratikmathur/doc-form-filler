@@ -1,0 +1,159 @@
+{
+  "extractedAt": "2026-11-01T16:52:55.095Z",
+  "patient": {
+    "firstName": "Harold",
+    "middleName": "T",
+    "lastName": "Simmons",
+    "dob": "1952-11-09",
+    "sex": "Male",
+    "prn": "SH593769",
+    "ssn": "",
+    "address": {
+      "streetAddress1": "1238 Holbrook Ter NE",
+      "streetAddress2": "Apt 2B",
+      "city": "Washington",
+      "state": "DC",
+      "postalCode": "20002",
+      "notes": ""
+    },
+    "homePhone": "(202) 555-0162",
+    "mobilePhone": "",
+    "email": "harold.simmons.fake@example.com",
+    "chartNote": "Medicare MBI: 4TQ8-HN2-RW39 (fake). Daughter: Denise Simmons (301) 555-0110."
+  },
+  "contacts": [],
+  "provider": {
+    "name": "Pratik Mathur",
+    "phone": "202-555-0100",
+    "email": "doctor@example.com",
+    "practice": "Pratik Mathur Practice",
+    "address1": "1234 byrd lane",
+    "address2": "",
+    "city": "Washington",
+    "state": "DC",
+    "zip": "20010"
+  },
+  "diagnoses": [
+    {
+      "icd10": "J44.9",
+      "name": "Chronic obstructive pulmonary disease, unspecified",
+      "acuity": "Chronic",
+      "active": true,
+      "start": "2014-02-01",
+      "stop": null
+    },
+    {
+      "icd10": "J96.11",
+      "name": "Chronic respiratory failure with hypoxia",
+      "acuity": "Chronic",
+      "active": true,
+      "start": "2023-05-01",
+      "stop": null
+    },
+    {
+      "icd10": "I50.32",
+      "name": "Chronic diastolic (congestive) heart failure",
+      "acuity": "Chronic",
+      "active": true,
+      "start": "2021-08-01",
+      "stop": null
+    },
+    {
+      "icd10": "I10",
+      "name": "Essential (primary) hypertension",
+      "acuity": "Chronic",
+      "active": true,
+      "start": "2005-01-01",
+      "stop": null
+    },
+    {
+      "icd10": "M17.0",
+      "name": "Bilateral primary osteoarthritis of knee",
+      "acuity": "Chronic",
+      "active": true,
+      "start": "2016-01-01",
+      "stop": null
+    }
+  ],
+  "medications": [
+    {
+      "name": "Tiotropium Bromide 18 MCG Inhalation Capsule",
+      "sig": "Inhale contents of 1 capsule once daily",
+      "start": "2014-02-01",
+      "stop": null,
+      "active": true
+    },
+    {
+      "name": "Fluticasone-Salmeterol 250-50 MCG/ACT Inhalation Aerosol Powder Breath Activated",
+      "sig": "Inhale 1 puff twice daily, rinse mouth after use",
+      "start": "2019-01-01",
+      "stop": null,
+      "active": true
+    },
+    {
+      "name": "Furosemide 40 MG Oral Tablet",
+      "sig": "Take 1 tablet by mouth every morning",
+      "start": "2021-08-01",
+      "stop": null,
+      "active": true
+    },
+    {
+      "name": "Lisinopril 20 MG Oral Tablet",
+      "sig": "Take 1 tablet by mouth once daily",
+      "start": "2005-01-01",
+      "stop": null,
+      "active": true
+    },
+    {
+      "name": "amLODIPine Besylate 5 MG Oral Tablet",
+      "sig": "Take 1 tablet by mouth once daily",
+      "start": "2018-01-01",
+      "stop": null,
+      "active": true
+    },
+    {
+      "name": "Albuterol Sulfate HFA 108 (90 Base) MCG/ACT Inhalation Aerosol Solution",
+      "sig": "Inhale 2 puffs every 4-6 hours as needed for shortness of breath",
+      "start": "2014-02-01",
+      "stop": null,
+      "active": true
+    }
+  ],
+  "allergies": [],
+  "noKnownAllergies": false,
+  "history": {
+    "majorEvents": "COPD exacerbation hospitalizations 01/2025 and 02/2026. Right knee arthroscopy 2010. PFTs 03/2026: FEV1 38% predicted, FEV1/FVC 0.52 (GOLD 3, severe). Echo 2025: EF 55%, grade II diastolic dysfunction. Home oxygen 2 L/min via nasal cannula with exertion and sleep since 05/2023; portable oxygen concentrator.",
+    "ongoingProblems": "Severe COPD with chronic hypoxic respiratory failure on home O2; heart failure with preserved EF; hypertension; bilateral knee osteoarthritis. Two falls in past 12 months.",
+    "preventiveCare": "",
+    "social": "Former smoker, 45 pack-years, quit 2014. Retired Metrobus mechanic. Lives alone in a 2nd-floor apartment (14 stairs, no elevator); daughter checks in weekly. Uses rollator walker and portable oxygen outside the home. Nearest bus stop is 3 blocks away; nearest Metrorail station is 0.8 miles.",
+    "developmental": "",
+    "family": ""
+  },
+  "vitals": [
+    {
+      "date": "2026-10-23",
+      "height_in": 70,
+      "weight_lb": 212,
+      "bmi": 30.4,
+      "bp": "146/88",
+      "temp_f": 98,
+      "pulse": 92,
+      "resp_rate": 22,
+      "o2_sat": 91
+    }
+  ],
+  "encounters": [
+    {
+      "date": "2026-10-23",
+      "type": "SOAP Note",
+      "signed": false,
+      "chiefComplaint": "COPD and CHF follow-up; needs MetroAccess paratransit form",
+      "subjective": "73 y/o M with severe COPD on home oxygen, HFpEF and bilateral knee OA. Dyspnea mMRC grade 3: stops for breath after walking about 100 yards or a few minutes on level ground.\nCannot walk the 3 blocks to the bus stop without stopping 2-3 times; cannot stand more than 5-10 minutes waiting for a bus or train. Knee pain limits walking and stairs. Two falls in the past year.\nCold air, hot humid days and poor air-quality days trigger exacerbations. Afraid of falling on ice and snow with walker and oxygen tank. Furosemide causes urinary urgency for several hours each morning.\nCan travel without a personal care attendant if door-to-door transportation is available.",
+      "objective": "O2 sat 91% at rest on room air, 85% after 50 feet of ambulation, 94% on 2 L/min. Lungs: diminished breath sounds, prolonged expiration, scattered expiratory wheezes. CV: RRR, 1+ bilateral ankle edema.\nMSK: bilateral knee crepitus, reduced flexion. Gait slow and wide-based with rollator walker; requires rest after 50 feet.",
+      "assessment": "Severe COPD, GOLD 3 (J44.9) with chronic hypoxic respiratory failure on home O2 (J96.11).\nChronic diastolic heart failure (I50.32).\nHypertension (I10), on treatment.\nBilateral primary knee osteoarthritis (M17.0).\nDisability is long-term; no expectation of improvement. Unable to independently use fixed-route Metrobus/Metrorail due to limited walking distance, oxygen dependence, fall risk and environmental triggers.",
+      "plan": "Continue tiotropium, fluticasone-salmeterol, albuterol PRN, furosemide, lisinopril, amlodipine. Oxygen 2 L/min with exertion and sleep.\nRequires rollator walker and portable oxygen for all travel.\nAble to complete a functional assessment if BP does not exceed 180/110 and he may use his oxygen and walker.\nComplete WMATA MetroAccess Part B. Pulmonary rehab referral. Follow-up 3 months.",
+      "simpleNote": ""
+    }
+  ],
+  "patientId": "synthetic-harold"
+}

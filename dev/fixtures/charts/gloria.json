@@ -1,0 +1,196 @@
+{
+  "extractedAt": "2026-11-01T16:52:53.755Z",
+  "patient": {
+    "firstName": "Gloria",
+    "middleName": "M",
+    "lastName": "Bell",
+    "dob": "1952-06-18",
+    "sex": "Female",
+    "prn": "BG867592",
+    "ssn": "",
+    "address": {
+      "streetAddress1": "3517 13th St NW",
+      "streetAddress2": "Apt 2",
+      "city": "Washington",
+      "state": "DC",
+      "postalCode": "20010",
+      "notes": ""
+    },
+    "homePhone": "(202) 555-0178",
+    "mobilePhone": "(202) 555-0179",
+    "email": "gloria.bell.fake@example.com",
+    "chartNote": "Medicare MBI: 1EG4-TE5-MK72 (fake). DC Medicaid ID: 70123456 (fake). Son/caregiver: Marcus Bell (202) 555-0191, employer: Federal agency IT contractor."
+  },
+  "contacts": [
+    {
+      "firstName": "Marcus",
+      "lastName": "Bell",
+      "relationship": "Child",
+      "phone": "(202) 555-0191"
+    }
+  ],
+  "provider": {
+    "name": "Pratik Mathur",
+    "phone": "202-555-0100",
+    "email": "doctor@example.com",
+    "practice": "Pratik Mathur Practice",
+    "address1": "1234 byrd lane",
+    "address2": "",
+    "city": "Washington",
+    "state": "DC",
+    "zip": "20010"
+  },
+  "diagnoses": [
+    {
+      "icd10": "I63.512",
+      "name": "Cerebral infarction due to unspecified occlusion or stenosis of left middle cerebral artery",
+      "acuity": "Acute",
+      "active": true,
+      "start": "2026-09-14",
+      "stop": null
+    },
+    {
+      "icd10": "I69.351",
+      "name": "Hemiplegia and hemiparesis following cerebral infarction affecting right dominant side",
+      "acuity": "Chronic",
+      "active": true,
+      "start": "2026-09-14",
+      "stop": null
+    },
+    {
+      "icd10": "I69.320",
+      "name": "Aphasia following cerebral infarction",
+      "acuity": "Chronic",
+      "active": true,
+      "start": "2026-09-14",
+      "stop": null
+    },
+    {
+      "icd10": "I48.91",
+      "name": "Unspecified atrial fibrillation",
+      "acuity": "Chronic",
+      "active": true,
+      "start": "2018-03-01",
+      "stop": null
+    },
+    {
+      "icd10": "I10",
+      "name": "Essential (primary) hypertension",
+      "acuity": "Chronic",
+      "active": true,
+      "start": "2004-01-01",
+      "stop": null
+    },
+    {
+      "icd10": "E11.9",
+      "name": "Type 2 diabetes mellitus without complications",
+      "acuity": "Chronic",
+      "active": true,
+      "start": "2010-06-01",
+      "stop": null
+    }
+  ],
+  "medications": [
+    {
+      "name": "Eliquis 5 MG Oral Tablet",
+      "sig": "Take 1 tablet by mouth twice daily",
+      "start": "2026-09-22",
+      "stop": null,
+      "active": true
+    },
+    {
+      "name": "Atorvastatin Calcium 80 MG Oral Tablet",
+      "sig": "Take 1 tablet by mouth at bedtime",
+      "start": "2026-09-22",
+      "stop": null,
+      "active": true
+    },
+    {
+      "name": "metFORMIN HCl 500 MG Oral Tablet",
+      "sig": "Take 1 tablet by mouth twice daily with meals",
+      "start": "2010-06-01",
+      "stop": null,
+      "active": true
+    },
+    {
+      "name": "Lisinopril 20 MG Oral Tablet",
+      "sig": "Take 1 tablet by mouth once daily",
+      "start": "2015-01-01",
+      "stop": null,
+      "active": true
+    },
+    {
+      "name": "Metoprolol Succinate ER 50 MG Oral Tablet Extended Release 24 Hour",
+      "sig": "Take 1 tablet by mouth once daily",
+      "start": "2018-03-01",
+      "stop": null,
+      "active": true
+    }
+  ],
+  "allergies": [
+    {
+      "allergen": "Codeine",
+      "severity": "Mild",
+      "reactions": [
+        "Nausea"
+      ],
+      "active": true
+    }
+  ],
+  "noKnownAllergies": false,
+  "history": {
+    "majorEvents": "Hospitalized 09/14/2026-09/22/2026 (Washington General Hospital, fake) for acute left MCA ischemic stroke; outside tPA window. Inpatient rehabilitation 09/22/2026-10/10/2026. Discharged home with son.",
+    "ongoingProblems": "Right hemiparesis and expressive aphasia after stroke; atrial fibrillation on apixaban; hypertension; type 2 diabetes.",
+    "preventiveCare": "",
+    "social": "Widowed. Lives with son Marcus Bell (age 46), who is her primary caregiver and works full-time as an IT analyst. Retired school cafeteria worker. Never smoker, no alcohol.",
+    "developmental": "",
+    "family": ""
+  },
+  "vitals": [
+    {
+      "date": "2026-10-14",
+      "height_in": 63,
+      "weight_lb": 151,
+      "bmi": 26.7,
+      "bp": "142/78",
+      "temp_f": 98.1,
+      "pulse": 74,
+      "resp_rate": 16,
+      "o2_sat": 97
+    },
+    {
+      "date": "2026-10-28",
+      "weight_lb": 150,
+      "bp": "136/76",
+      "temp_f": 98,
+      "pulse": 70,
+      "resp_rate": 16,
+      "o2_sat": 97
+    }
+  ],
+  "encounters": [
+    {
+      "date": "2026-10-14",
+      "type": "SOAP Note",
+      "signed": false,
+      "chiefComplaint": "Post-hospital follow-up after stroke; son requests FMLA and home care paperwork",
+      "subjective": "74 y/o F seen 4 days after discharge from inpatient rehab for left MCA ischemic stroke (09/14/2026). Accompanied by son Marcus, primary caregiver.\nPersistent right-sided weakness and expressive aphasia. Uses hemi-walker in home and wheelchair for distances. Needs help bathing, dressing, toileting and transfers; feeds self after setup. Cannot manage medications, cooking, money or phone calls.\nSon requests FMLA certification to care for her and a level-of-care request for the EPD waiver.",
+      "objective": "Alert, follows 1-step commands. Expressive aphasia, short phrases. Right facial droop. RUE strength 2/5, RLE 3/5, left 5/5. Requires 1-person assist for sit-to-stand and transfers. Irregularly irregular rhythm.",
+      "assessment": "Left MCA ischemic stroke 09/14/2026 (I63.512) with right dominant hemiparesis (I69.351) and aphasia (I69.320).\nAtrial fibrillation on anticoagulation (I48.91).\nHTN (I10), T2DM (E11.9).",
+      "plan": "Home health PT, OT and speech therapy 3x/week for 8 weeks (10/15/2026-12/10/2026).\nRequires 24-hour supervision and hands-on help with ADLs; son is providing care.\nSon will need continuous leave from work 10/10/2026 through 12/31/2026, then intermittent leave to take her to appointments (about 2-3 per month, 1 day each) for the next 6 months.\nCardiology follow-up 11/05/2026; Neurology follow-up 11/18/2026.\nComplete DHCF 1728 for EPD waiver; complete FMLA WH-380-F for son.",
+      "simpleNote": ""
+    },
+    {
+      "date": "2026-10-28",
+      "type": "SOAP Note",
+      "signed": false,
+      "chiefComplaint": "Stroke follow-up, functional status review",
+      "subjective": "Slow improvement with home therapy. Still requires extensive assistance with bathing, dressing and toileting. Walks short distances with hemi-walker and standby assistance of 1 person. Eats with setup and help cutting food.\nUnable to manage medications, prepare meals, do housekeeping, manage money or use the telephone without help.",
+      "objective": "RUE 2+/5, RLE 3+/5. Speech: expressive aphasia, improving. Not ventilator dependent.",
+      "assessment": "Functional status: ADLs - bathing extensive, dressing extensive, overall mobility limited/supervision, eating limited/supervision, toilet use extensive. IADLs - medication management, meal preparation, housekeeping, money management, telephone: all extensive/total.",
+      "plan": "Continue home therapy. Continue apixaban, atorvastatin, BP and diabetes regimen. Recheck 4 weeks.",
+      "simpleNote": ""
+    }
+  ],
+  "patientId": "synthetic-gloria"
+}

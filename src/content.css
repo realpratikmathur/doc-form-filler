@@ -1,0 +1,30 @@
+#dff-fill-form-button {
+  position: fixed;
+  left: 96px;
+  bottom: 18px;
+  z-index: 2147483000;
+  padding: 10px 16px;
+  font: 600 14px/1 "Open Sans", Arial, sans-serif;
+  color: #fff;
+  background: #1f6feb;
+  border: 0;
+  border-radius: 22px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  cursor: pointer;
+}
+#dff-fill-form-button:hover { background: #1158c7; }
+
+/* inside Practice Fusion's blue patient bar, next to "Actions" */
+#dff-fill-form-button.dff-inline {
+  position: static;
+  margin-right: 10px;
+  padding: 6px 14px;
+  font-size: 13px;
+  color: #0b5cad;
+  background: #fff;
+  border: 1px solid #fff;
+  border-radius: 4px;
+  box-shadow: none;
+  vertical-align: middle;
+}
+#dff-fill-form-button.dff-inline:hover { background: #e8f1fb; }

@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Doc Form Filler</title>
+  <link rel="stylesheet" href="app.css">
+</head>
+<body>
+  <header>
+    <h1>📝 Doc Form Filler</h1>
+    <a href="options.html" target="_blank" id="settings-link">Settings</a>
+  </header>
+
+  <main>
+    <section id="status-box" class="card">
+      <p id="status">Reading the chart from Practice Fusion…</p>
+    </section>
+
+    <section id="patient-box" class="card hidden">
+      <h2>Patient</h2>
+      <p id="patient-line"></p>
+      <p class="muted" id="chart-counts"></p>
+    </section>
+
+    <section id="form-box" class="card hidden">
+      <h2>1. Choose a form</h2>
+      <div id="form-list"></div>
+      <p id="ai-note" class="muted"></p>
+      <button id="generate" type="button" class="primary">2. Generate filled PDF</button>
+      <p id="progress" class="muted"></p>
+    </section>
+
+    <section id="result-box" class="card hidden">
+      <h2>3. Review, edit, print</h2>
+      <p>The PDF opens in a new tab. <b>Every filled box is editable</b>: click a box in the PDF to change it, then print or download.
+         Check everything before you sign.</p>
+      <div class="buttons">
+        <button id="open-pdf" type="button" class="primary">Open PDF</button>
+        <button id="download-pdf" type="button">Download PDF</button>
+      </div>
+      <p id="ai-result" class="muted"></p>
+      <div id="missing"></div>
+      <details>
+        <summary>Show every field and where its value came from</summary>
+        <table id="rows"><thead><tr><th>Field</th><th>Value</th><th>Source</th></tr></thead><tbody></tbody></table>
+      </details>
+      <details id="payload-details" class="hidden">
+        <summary>Show exactly what was sent to Claude (de-identified)</summary>
+        <pre id="payload"></pre>
+      </details>
+    </section>
+  </main>
+  <script type="module" src="app.js"></script>
+</body>
+</html>
