@@ -1,6 +1,6 @@
 {
   "name": "doc-form-filler",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "private": true,
   "description": "Chrome extension that pre-fills physician paperwork (FMLA, MetroAccess, DC DDS) from the open Practice Fusion chart.",
   "type": "module",

@@ -47,6 +47,11 @@ function pfResponse(urlPath) {
   if (/flowsheetData/.test(urlPath)) return { seriesDataCollections: Object.entries(LOINC).map(([k, code]) => ({ seriesData: c.vitals.filter(v => v[k] != null).map(v => ({ eventDateTimeUtc: `${v.date}T00:00:00Z`, code: { code }, value: String(v[k]) })) })) };
   return null;
 }
+// Variant where Practice Fusion's patient bar clips anything extra (seen on smaller screens).
+const PF_PAGE_CRAMPED = `<!doctype html><html><head><title>Practice Fusion (offline stand-in, cramped)</title></head><body>
+<div style="background:#1fa0e3;color:#fff;padding:12px;font:16px Arial"><h3 data-element="patient-ribbon-patient-name"></h3>
+<div style="width:70px;height:26px;overflow:hidden;white-space:nowrap"><button data-element="patient-header-actions-menu-dropdown">Actions</button></div></div>
+<script>sessionStorage.setItem('sessionGUID','"offline"');sessionStorage.setItem('userGuid','"u1"');sessionStorage.setItem('practiceGuid','"p1"');</script></body></html>`;
 const PF_PAGE = `<!doctype html><html><head><title>Practice Fusion (offline stand-in)</title></head><body>
 <div style="background:#1fa0e3;color:#fff;padding:12px;font:16px Arial"><h3 data-element="patient-ribbon-patient-name" id="name"></h3>
 <div><button data-element="patient-header-actions-menu-dropdown">Actions</button></div></div>
@@ -54,11 +59,12 @@ const PF_PAGE = `<!doctype html><html><head><title>Practice Fusion (offline stan
 
 const context = await chromium.launchPersistentContext('', {
   headless: !process.env.HEADED, channel: 'chromium', executablePath: process.env.CHROMIUM_PATH || undefined,
-  args: [`--disable-extensions-except=${dist}`, `--load-extension=${dist}`], viewport: { width: 1280, height: 860 },
+  // --headless=new: Chrome < 132 defaults to the old headless mode, which cannot run extensions.
+  args: [`--disable-extensions-except=${dist}`, `--load-extension=${dist}`, ...(process.env.HEADED ? [] : ['--headless=new'])], viewport: { width: 1280, height: 860 },
 });
 await context.route('https://static.practicefusion.com/**', route => {
   const u = new URL(route.request().url());
-  if (u.pathname.startsWith('/apps/ehr/')) return route.fulfill({ status: 200, contentType: 'text/html', body: PF_PAGE });
+  if (u.pathname.startsWith('/apps/ehr/')) return route.fulfill({ status: 200, contentType: 'text/html', body: u.pathname.includes('cramped') ? PF_PAGE_CRAMPED : PF_PAGE });
   const body = pfResponse(u.pathname);
   return body ? route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(body) }) : route.fulfill({ status: 404, body: '' });
 });
@@ -76,15 +82,32 @@ await context.route('https://api.anthropic.com/**', async route => {
     content: [{ type: 'text', text: JSON.stringify(cannedAnswers(form.id, key, payload)) }], stop_reason: 'end_turn', stop_sequence: null, usage: { input_tokens: 1, output_tokens: 1 } }) });
 });
 
+const dsSent = []; let dsCalls = 0;
+await context.route('https://api.deepseek.com/**', async route => {
+  const req = route.request();
+  const u = new URL(req.url());
+  if (u.pathname === '/models') return route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ object: 'list', data: [{ id: 'mock-flash', object: 'model' }, { id: 'mock-pro', object: 'model' }] }) });
+  const body = JSON.parse(req.postData());
+  const sys = body.messages[0].content, user = body.messages[1].content;
+  const payload = JSON.parse(user.slice(user.indexOf('{"today"')));
+  const form = FORMS.find(f => Object.keys(f.aiFields).every(k => sys.includes(`"${k}"`)) && Object.keys(f.aiFields).length === (sys.match(/^- "/gm) || []).length);
+  const key = { 'fmla-wh380e': 'angela', 'fmla-wh380f': 'gloria', 'metroaccess-partb': 'harold', 'dds-medeval': 'darnell' }[form.id];
+  dsSent.push({ form: form.id, body, auth: req.headers().authorization });
+  dsCalls++;
+  const content = dsCalls === 1 ? '   ' : JSON.stringify(cannedAnswers(form.id, key, payload));   // first reply blank (documented DeepSeek quirk)
+  return route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ id: 'x', object: 'chat.completion', model: body.model,
+    choices: [{ index: 0, finish_reason: 'stop', message: { role: 'assistant', content } }], usage: { prompt_tokens: 1, completion_tokens: 1 } }) });
+});
+
 let [sw] = context.serviceWorkers(); if (!sw) sw = await context.waitForEvent('serviceworker');
 const extId = new URL(sw.url()).host;
 const pageErrors = [];
 context.on('page', p => p.on('pageerror', e => pageErrors.push(`${p.url().slice(0, 60)}: ${e.message}`)));
 
-async function openFiller(pid) {
+async function openFiller(pid, page = 'index.html') {
   const pf = await context.newPage();
   pf.on('pageerror', e => pageErrors.push(`PF: ${e.message}`));
-  await pf.goto(`https://static.practicefusion.com/apps/ehr/index.html#/PF/charts/patients/${pid}/summary`);
+  await pf.goto(`https://static.practicefusion.com/apps/ehr/${page}#/PF/charts/patients/${pid}/summary`);
   const btn = pf.locator('#dff-fill-form-button');
   await btn.waitFor({ timeout: 10000 });
   const [app] = await Promise.all([context.waitForEvent('page'), btn.click()]);
@@ -143,6 +166,62 @@ await app.check('input[name="form"][value="metroaccess-partb"]');
 ok(!(await app.isDisabled('#generate')), 'Generate enabled after choosing a form');
 await app.close(); await pf.close();
 charts[pid0] = saved;
+
+console.log('\nButton robustness');
+{
+  const pidD = Object.keys(charts)[3];
+  const pf = await context.newPage();
+  await pf.goto(`https://static.practicefusion.com/apps/ehr/cramped.html#/PF/charts/patients/${pidD}/summary`);
+  await pf.locator('#dff-fill-form-button').waitFor({ timeout: 10000 });
+  await pf.waitForTimeout(800);
+  const st = await pf.evaluate(() => { const b = document.getElementById('dff-fill-form-button'); const r = b.getBoundingClientRect();
+    const hit = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2); return { inline: b.classList.contains('dff-inline'), hit: !!hit && (hit === b || b.contains(hit)) }; });
+  ok(!st.inline && st.hit, 'cramped patient bar: button floats and is visible');
+  const tabId = await sw.evaluate(async () => (await chrome.tabs.query({ url: 'https://*.practicefusion.com/*' })).find(t => t.url.includes('cramped')).id);
+  const badge = await sw.evaluate(id => chrome.action.getBadgeText({ tabId: id }), tabId);
+  ok(badge === 'GO', `toolbar badge on a chart: "${badge}"`);
+  const inj = await sw.evaluate(() => self.dffInjectIntoOpenTabs());
+  await pf.waitForTimeout(500);
+  ok(inj.tabs >= 1 && inj.injected === inj.tabs, `re-adding the button to open tabs works (${inj.injected}/${inj.tabs})`);
+  ok(await pf.locator('#dff-fill-form-button').count() === 1, 'no duplicate button after re-adding');
+  const opt = await context.newPage();
+  await opt.goto(`chrome-extension://${extId}/options.html`);
+  await opt.waitForFunction(() => /button is (active|showing)/.test(document.getElementById('checks').textContent), null, { timeout: 10000 });
+  const checks = await opt.textContent('#checks');
+  ok(/Allowed to run on Practice Fusion/.test(checks) && /button is active in/.test(checks), 'Settings → Check setup reports access and active button');
+  if (process.env.DOCS) { await opt.fill('#credentials', 'MD'); await opt.fill('#specialty', 'Internal Medicine'); await opt.screenshot({ path: path.join(root, 'docs/img/06-settings.png'), fullPage: true }); }
+  await opt.close(); await pf.close();
+}
+
+console.log('\nDeepSeek provider');
+{
+  const opt = await context.newPage();
+  await opt.goto(`chrome-extension://${extId}/options.html`);
+  await opt.check('input[name="aiProvider"][value="deepseek"]');
+  await opt.fill('#deepseekApiKey', 'sk-test-not-a-real-key');
+  await opt.click('#load-deepseek-models');
+  await opt.waitForFunction(() => /Key works/.test(document.getElementById('deepseek-model-status').textContent), null, { timeout: 15000 });
+  ok(await opt.inputValue('#deepseekModel') === 'mock-pro', 'model list loaded; "pro" model chosen by default');
+  ok(/based in China/.test(await opt.textContent('#deepseek-box')), 'privacy note shown for DeepSeek');
+  await opt.check('#aiEnabled'); await opt.click('#save'); await opt.waitForTimeout(300); await opt.close();
+  const pidD = Object.keys(charts)[3]; const chart = charts[pidD];
+  const { pf, app } = await openFiller(pidD);
+  ok(/drafted by DeepSeek/.test(await app.textContent('#ai-note')), 'filler page names DeepSeek');
+  const pdfTab = context.waitForEvent('page', { timeout: 30000 });
+  await app.click('#generate');
+  await app.waitForSelector('#result-box:not(.hidden)', { timeout: 30000 });
+  await (await pdfTab).close();
+  ok(/drafted by DeepSeek \(mock-pro\)/.test(await app.textContent('#ai-result')), `result: "${(await app.textContent('#ai-result')).trim().slice(0, 70)}"`);
+  ok(dsCalls === 2, `blank first reply was retried (${dsCalls} calls)`);
+  const req = dsSent[dsSent.length - 1];
+  ok(req.body.response_format?.type === 'json_object' && /json/i.test(req.body.messages[0].content) && req.auth === 'Bearer sk-test-not-a-real-key', 'JSON Output mode, prompt mentions json, key sent as Bearer');
+  ok(![chart.patient.firstName, chart.patient.lastName, chart.patient.dob].some(v => JSON.stringify(req.body).includes(v)), 'no patient identifiers sent to DeepSeek');
+  const b64 = await app.evaluate(async () => { const buf = new Uint8Array(await (await fetch(window.__lastPdf.url)).arrayBuffer()); let s = ''; for (const x of buf) s += String.fromCharCode(x); return btoa(s); });
+  const pdf = await PDFDocument.load(Buffer.from(b64, 'base64'));
+  const values = pdf.getForm().getFields().map(f => (f.getText ? f.getText() : '') || '').join(' | ');
+  ok(['Darnell J Jenkins', 'Loretta Jenkins', '10/22/2026', 'Epicanthal folds'].every(v => values.includes(v)), 'DeepSeek answers landed in the PDF with real names/dates restored');
+  await app.close(); await pf.close();
+}
 
 ok(!pageErrors.length, `no JavaScript errors${pageErrors.length ? `: ${pageErrors.join(' / ')}` : ''}`);
 await context.close();

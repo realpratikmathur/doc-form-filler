@@ -1,7 +1,7 @@
 // The page the doctor sees after clicking "Fill a form" in Practice Fusion.
 import { extractChartInPage } from './lib/extract.js';
 import { loadSettings } from './lib/settings.js';
-import { answerFormQuestions } from './lib/ai.js';
+import { activeProvider } from './lib/providers.js';
 import { generateForm } from './lib/pipeline.js';
 import { FORMS, formById } from './forms/index.js';
 
@@ -60,15 +60,15 @@ function renderForms() {
     label.querySelector('.note').textContent = f.note || '';
     list.appendChild(label);
   });
-  const aiReady = settings.aiEnabled && settings.anthropicApiKey && settings.model;
-  if (aiReady) {
+  const provider = activeProvider(settings);
+  if (provider) {
     $('ai-note').className = 'muted';
-    $('ai-note').textContent = 'Fields from the visit notes will be drafted by Claude using a de-identified copy of the chart (no names, IDs or real dates).';
+    $('ai-note').textContent = `Fields from the visit notes will be drafted by ${provider.name} using a de-identified copy of the chart (no names, IDs or real dates).`;
   } else {
     $('ai-note').className = 'notice';
     $('ai-note').innerHTML = '<b>AI drafting is off.</b> Only fields stored as data in the chart will be filled (name, DOB, diagnoses, medications, allergies, vitals, history). '
       + 'Answers that live in the visit notes (exam findings, labs, dates off work, functional limits…) will be left blank for you to type into the PDF. '
-      + 'To have Claude draft them, add an Anthropic API key in <a href="options.html" target="_blank">Settings</a>, then reload this page.';
+      + 'To have AI draft them, add a Claude (Anthropic) or DeepSeek API key in <a href="options.html" target="_blank">Settings</a>, then reload this page.';
   }
   if (!suggestions.some(x => x.why)) {
     const p = document.createElement('p'); p.className = 'notice';
@@ -89,8 +89,8 @@ async function generate() {
   $('result-box').classList.add('hidden');
   try {
     const templateBytes = await (await fetch(chrome.runtime.getURL(`forms/${form.templateFile}`))).arrayBuffer();
-    const aiReady = settings.aiEnabled && settings.anthropicApiKey && settings.model;
-    const askAi = aiReady ? ({ form: fm, payload }) => answerFormQuestions({ apiKey: settings.anthropicApiKey, model: settings.model, form: fm, payload }) : null;
+    const provider = activeProvider(settings);
+    const askAi = provider ? provider.ask : null;
     const res = await generateForm({ form, chart, templateBytes, settings, askAi, onStep: t => { $('progress').textContent = t; } });
     showResult(form, res);
   } catch (e) {
@@ -111,8 +111,9 @@ function showResult(form, { bytes, rows, aiInfo }) {
 
   $('ai-result').innerHTML = '';
   const aiLine = document.createElement('span');
-  if (aiInfo.used) aiLine.textContent = `Note-based fields drafted by Claude (${aiInfo.model}). They are suggestions; check them against your notes.`;
-  else if (aiInfo.error) { aiLine.textContent = `Claude was not used: ${aiInfo.error}`; aiLine.className = 'error'; }
+  const pname = (activeProvider(settings) || {}).short || 'AI';
+  if (aiInfo.used) aiLine.textContent = `Note-based fields drafted by ${pname} (${aiInfo.model}). They are suggestions; check them against your notes.`;
+  else if (aiInfo.error) { aiLine.textContent = `${pname} was not used: ${aiInfo.error}`; aiLine.className = 'error'; }
   else aiLine.textContent = 'AI was off; note-based fields are blank.';
   $('ai-result').appendChild(aiLine);
 
@@ -139,7 +140,7 @@ function showResult(form, { bytes, rows, aiInfo }) {
 
   const tbody = $('rows').querySelector('tbody');
   tbody.innerHTML = '';
-  const SRC = { chart: 'Practice Fusion chart', ai: 'Claude (from notes)', settings: 'Your settings', doctor: 'You' };
+  const SRC = { chart: 'Practice Fusion chart', ai: 'AI (from notes)', settings: 'Your settings', doctor: 'You' };
   rows.forEach(r => {
     const tr = document.createElement('tr');
     [r.label, r.value || '—', SRC[r.source] || r.source].forEach((t, i) => { const td = document.createElement('td'); td.textContent = t; if (i === 2) td.className = `src-${r.source}`; tr.appendChild(td); });

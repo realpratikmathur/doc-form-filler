@@ -2,8 +2,9 @@
 // DE-IDENTIFIED chart (see deid.js) and the form's question list. Answers come back as JSON that
 // matches the form's schema; they are re-identified locally before being written to the PDF.
 import Anthropic from '@anthropic-ai/sdk';
+import { normalizeAnswers } from './answers.js';
 
-const SYSTEM = `You help a physician complete paperwork (disability, leave, and transportation forms) from the patient's chart.
+export const SYSTEM = `You help a physician complete paperwork (disability, leave, and transportation forms) from the patient's chart.
 The physician reviews and signs every form, so accuracy matters more than completeness.
 
 Rules:
@@ -18,7 +19,7 @@ export function makeClient(apiKey) {
   return new Anthropic({ apiKey, dangerouslyAllowBrowser: true, maxRetries: 2 });
 }
 
-/** List models the key can use, newest first (Options page dropdown). */
+/** List models the key can use, newest first (Settings page dropdown). */
 export async function listModels(apiKey) {
   const client = makeClient(apiKey);
   const out = [];
@@ -70,8 +71,8 @@ export class AiError extends Error {}
  * @returns {Promise<{answers: object, model: string, usage: object}>}
  */
 export async function answerFormQuestions({ apiKey, model, form, payload }) {
-  if (!apiKey) throw new AiError('No Anthropic API key is set (Options page).');
-  if (!model) throw new AiError('No Claude model is selected (Options page).');
+  if (!apiKey) throw new AiError('No Anthropic API key is set (Settings page).');
+  if (!model) throw new AiError('No Claude model is selected (Settings page).');
   const client = makeClient(apiKey);
   const supportsFallback = /opus|fable/i.test(model);
   const request = {
@@ -90,9 +91,9 @@ export async function answerFormQuestions({ apiKey, model, form, payload }) {
   try {
     response = supportsFallback ? await client.beta.messages.create(request) : await client.messages.create(request);
   } catch (error) {
-    if (error instanceof Anthropic.AuthenticationError) throw new AiError('The Anthropic API key was rejected. Check it on the Options page.');
+    if (error instanceof Anthropic.AuthenticationError) throw new AiError('The Anthropic API key was rejected. Check it on the Settings page.');
     if (error instanceof Anthropic.PermissionDeniedError) throw new AiError('This API key is not allowed to use the selected model.');
-    if (error instanceof Anthropic.NotFoundError) throw new AiError(`Model "${model}" was not found. Pick another on the Options page.`);
+    if (error instanceof Anthropic.NotFoundError) throw new AiError(`Model "${model}" was not found. Pick another on the Settings page.`);
     if (error instanceof Anthropic.RateLimitError) throw new AiError('Claude is rate-limiting this key right now. Wait a minute and try again.');
     if (error instanceof Anthropic.BadRequestError) throw new AiError(`Claude rejected the request: ${error.message}`);
     if (error instanceof Anthropic.APIError) throw new AiError(`Claude API error ${error.status ?? ''}: ${error.message}`);
@@ -103,5 +104,5 @@ export async function answerFormQuestions({ apiKey, model, form, payload }) {
   const text = response.content.filter(b => b.type === 'text').map(b => b.text).join('');
   let answers;
   try { answers = JSON.parse(text); } catch { throw new AiError('Claude returned an answer that was not valid JSON.'); }
-  return { answers, model: response.model, usage: response.usage };
+  return { answers: normalizeAnswers(form.aiFields, answers), model: response.model, usage: response.usage };
 }

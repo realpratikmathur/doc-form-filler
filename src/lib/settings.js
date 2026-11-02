@@ -9,8 +9,11 @@ export const DEFAULT_SETTINGS = {
   fax: '',
   phoneOverride: '',       // blank = Practice Fusion office phone
   aiEnabled: true,
+  aiProvider: 'anthropic', // 'anthropic' (Claude) or 'deepseek'
   anthropicApiKey: '',
-  model: '',               // chosen in Options from the live model list
+  model: '',               // Claude model, chosen in Settings from the live model list
+  deepseekApiKey: '',
+  deepseekModel: '',       // DeepSeek model, chosen in Settings from the live model list
 };
 
 export async function loadSettings() {

@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Doc Form Filler",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "description": "Pre-fills FMLA, MetroAccess and DC DDS forms from the Practice Fusion chart you have open. You review and sign.",
   "icons": {
     "16": "icons/icon16.png",
@@ -24,16 +24,18 @@
     "scripting",
     "storage",
     "tabs",
-    "downloads"
+    "downloads",
+    "activeTab"
   ],
   "host_permissions": [
-    "https://static.practicefusion.com/*",
-    "https://api.anthropic.com/*"
+    "https://*.practicefusion.com/*",
+    "https://api.anthropic.com/*",
+    "https://api.deepseek.com/*"
   ],
   "content_scripts": [
     {
       "matches": [
-        "https://static.practicefusion.com/apps/ehr/*"
+        "https://*.practicefusion.com/*"
       ],
       "js": [
         "content.js"
@@ -44,5 +46,14 @@
       "run_at": "document_idle"
     }
   ],
-  "web_accessible_resources": []
+  "minimum_chrome_version": "115",
+  "commands": {
+    "_execute_action": {
+      "suggested_key": {
+        "default": "Alt+Shift+F",
+        "mac": "Alt+Shift+F"
+      },
+      "description": "Fill a form for the open patient chart"
+    }
+  }
 }

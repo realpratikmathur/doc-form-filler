@@ -85,5 +85,16 @@ for (const [formId, key] of CASES) {
     }
   }
 }
+console.log('\nAnswer normalizer (used for both providers)');
+{
+  const { normalizeAnswers, describeFields } = await import('../src/lib/answers.js');
+  const fields = { a: { enum: ['was', 'will be'] }, b: { type: 'boolean' }, c: { type: 'array', itemsEnum: ['Walker', 'Portable Oxygen'] }, d: {} , e: { type: 'array' } };
+  const n = normalizeAnswers(fields, { a: 'Will Be', b: 'yes', c: ['walker', 'Rocket'], d: null, e: 'x; y', extra: 1 });
+  ok(n.a === 'will be' && n.b === true && n.c.join() === 'Walker' && n.d === '' && n.e.join() === 'x,y' && !('extra' in n), 'coerces choices, yes/no, lists and blanks; drops unknown keys');
+  const n2 = normalizeAnswers(fields, { a: 'maybe', b: 'no', c: 'Walker' });
+  ok(n2.a === '' && n2.b === false && n2.c.join() === 'Walker', 'invalid choice becomes blank; string list accepted');
+  ok(normalizeAnswers(fields, null).b === false, 'garbage input gives a complete, empty answer set');
+  ok(/"a" \(one of "was", "will be"/.test(describeFields(fields).lines), 'prompt field list lists the allowed values');
+}
 console.log(failures ? `\n${failures} check(s) FAILED` : '\nAll checks passed. PDFs in dev/out/');
 process.exit(failures ? 1 : 0);

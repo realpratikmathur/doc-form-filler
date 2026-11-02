@@ -12,8 +12,8 @@ A Chrome extension that pre-fills a doctor's paperwork from the patient chart th
 The doctor opens a chart, clicks **📝 Fill a form**, picks the form, and gets a draft PDF. **Every value in the PDF is an editable field**, so the doctor can change anything, then print and sign.
 
 - Things stored as data in the chart are copied straight in: name, DOB, diagnoses with ICD-10 codes, medications, allergies, vitals, guardian/next of kin, and the practice's name, address and phone.
-- Answers that live only in the visit notes can optionally be drafted by Claude (Anthropic's AI). Examples: "off work 10/06–11/30", "needs a walker and portable oxygen", the exam findings.
-- Before anything is sent to Claude, the chart is **de-identified on the doctor's computer**: names, IDs, phone numbers and addresses are removed, and dates are shifted.
+- Answers that live only in the visit notes can optionally be drafted by AI: **Claude** (Anthropic) or **DeepSeek**, your choice. Examples: "off work 10/06–11/30", "needs a walker and portable oxygen", the exam findings.
+- Before anything is sent to the AI, the chart is **de-identified on the doctor's computer**: names, IDs, phone numbers and addresses are removed, and dates are shifted.
 - Without an AI key, nothing leaves the computer, and the note-based boxes are left blank to type into.
 
 > ⚠️ Drafts only. The doctor must review every field before signing. The extension never submits anything anywhere.
@@ -43,8 +43,11 @@ The doctor opens a chart, clicks **📝 Fill a form**, picks the form, and gets 
 
 ### Step 3. Click **📝 Fill a form**
 
-In the blue bar with the patient's name, there is now a white **📝 Fill a form** button at the top right, directly above Practice Fusion's **Actions** button.
-Clicking the extension's icon in Chrome's toolbar does the same thing.
+In the blue bar with the patient's name, there is now a white **📝 Fill a form** button at the top right, directly above Practice Fusion's **Actions** button. On smaller screens, where that bar has no room, the button floats at the **bottom-left** of the window instead.
+
+Two other ways do the same thing, and work even if the button isn't showing:
+- Click the extension's icon in Chrome's toolbar. It shows a green **GO** badge whenever a patient chart is open.
+- Press **Alt+Shift+F**.
 
 ![The Fill a form button in the patient bar](docs/img/02-pf-chart-button.png)
 
@@ -69,8 +72,8 @@ The filled PDF opens automatically in a new Chrome tab. If you close it, click *
 
 Back on the **Doc Form Filler** tab, check:
 - **"Left blank — not found in the chart"**: anything the tool couldn't fill. Fill these in the PDF if they apply.
-- **"Show every field and where its value came from"**: every value and its source. *Practice Fusion chart* means copied from the chart, *Claude (from notes)* means AI-drafted, *Your settings* means from Settings.
-- **"Show exactly what was sent to Claude"**: the de-identified copy of the chart, so you can see that no names or IDs left the computer.
+- **"Show every field and where its value came from"**: every value and its source. *Practice Fusion chart* means copied from the chart, *AI (from notes)* means drafted by Claude or DeepSeek, *Your settings* means from Settings.
+- **"Show exactly what was sent to the AI"**: the de-identified copy of the chart, so you can see that no names or IDs left the computer.
 
 ![Result screen](docs/img/04-filler-result.png)
 
@@ -87,7 +90,7 @@ Whoever sets up the office computer does this once. It takes about 10 minutes.
 
 ### 2.1 What you need
 
-- **Google Chrome**. Microsoft Edge also works; use `edge://extensions` instead of `chrome://extensions`.
+- **Google Chrome 115 or newer** (tested on Chrome 115, 120, 150, 153, 155 and 156). Microsoft Edge also works; use `edge://extensions` instead of `chrome://extensions`. To check your version: Chrome menu ⋮ → Help → About Google Chrome.
 - **Node.js 20 or newer**, used only to build the extension. Download the LTS version from https://nodejs.org.
 - **git**, or download the repository as a ZIP from GitHub (green **Code** button → **Download ZIP**).
 
@@ -112,9 +115,9 @@ npm run build
 ```
 
 `npm run build` does three things:
-1. Bundles the JavaScript, including the PDF library and the Anthropic SDK, with esbuild.
+1. Bundles the JavaScript, including the PDF library and the Anthropic SDK, with esbuild (compiled for Chrome 115 and newer).
 2. Copies the extension's pages and icons.
-3. Downloads the three blank forms from their official sites (dol.gov, wmata.com, dds.dc.gov) into the extension.
+3. Downloads the four blank forms from their official sites (dol.gov, wmata.com, dds.dc.gov) into the extension.
 
 The finished extension is the **`dist`** folder. The last lines of the output say where it is.
 
@@ -128,7 +131,7 @@ The finished extension is the **`dist`** folder. The last lines of the output sa
 4. Select the **`dist`** folder inside `doc-form-filler` and click **Select**.
 5. **Doc Form Filler** appears in the list. Make sure its switch is **on** (blue).
 6. Pin it to the toolbar: click the **puzzle-piece** icon to the right of the address bar, then the **pin** next to *Doc Form Filler*.
-7. If Practice Fusion was already open in a tab, **reload that tab** (F5 or ⟳) so the button appears.
+7. Open **Settings** (see 2.4) and look at **Check setup** at the top. It confirms the extension can run on Practice Fusion and that the button is active in your Practice Fusion tabs, with a one-click fix if not. Practice Fusion tabs that were already open get the button automatically; reloading them (F5) also works.
 
 > Chrome may sometimes show a banner about developer-mode extensions. That's expected for an extension installed this way; keep it enabled.
 
@@ -145,15 +148,25 @@ Open Settings in any of these ways:
 
 **Your details for the forms.** Practice Fusion supplies the doctor's name, practice address, phone and e-mail automatically. Fill in what Practice Fusion doesn't store: credentials (MD), specialty, license number/state, NPI and fax.
 
-**AI drafting (optional).**
+**AI drafting (optional).** Pick one provider:
+
+*Claude (Anthropic):*
 1. Create an API key at **https://console.anthropic.com** → *API keys*.
-2. Paste it into **Anthropic API key** and click **Load models**. The newest Opus model is selected by default.
-3. Tick **Use Claude to draft note-based answers**.
-4. Click **Save settings**.
+2. Under **AI provider**, choose **Claude (Anthropic)**. Paste the key into **Anthropic API key** and click **Load models**. The newest Opus model is selected by default.
+
+*DeepSeek:*
+1. Create an API key at **https://platform.deepseek.com** → *API keys*, and add credit to the account.
+2. Under **AI provider**, choose **DeepSeek**. Paste the key into **DeepSeek API key** and click **Load models**. The most capable ("pro") model is selected by default.
+
+Then tick **Use AI to draft note-based answers** and click **Save settings**. You can switch providers at any time.
 
 ![Settings page](docs/img/06-settings.png)
 
-> **Before using real patient charts with AI**, make sure your Anthropic account is covered by a **HIPAA Business Associate Agreement (BAA)**. The extension de-identifies the chart first, but automatic de-identification of free-text notes is never perfect; see *Privacy* below.
+> **Before using real patient charts with AI**, make sure your AI provider is covered by a **HIPAA Business Associate Agreement (BAA)**. The extension de-identifies the chart first, but automatic de-identification of free-text notes is never perfect; see *Privacy* below.
+>
+> **About DeepSeek:** DeepSeek is a company based in China, and API requests are processed on its servers there. It does not advertise HIPAA BAAs. The extension sends it only the de-identified chart, but check with your compliance advisor before using DeepSeek with real patient charts.
+
+**Keyboard shortcut.** Alt+Shift+F opens the filler for the open chart. To change it, go to `chrome://extensions/shortcuts`.
 
 ---
 
@@ -163,13 +176,13 @@ Open Settings in any of these ways:
 |---|---|---|
 | Reading the chart | Inside the Practice Fusion tab, using your own logged-in session | The same requests Practice Fusion's screens make. Nothing is stored. |
 | Filling the PDF | Inside Chrome on this computer | The blank form plus chart data. Nothing is uploaded. |
-| AI drafting (only if turned on) | Anthropic's Claude API, called directly from Chrome | A **de-identified** copy of the chart and the form's question list |
+| AI drafting (only if turned on) | The provider you chose (Anthropic's Claude API or DeepSeek's API), called directly from Chrome | A **de-identified** copy of the chart and the form's question list |
 
 De-identification (`src/lib/deid.js`) happens on the computer before any AI call:
 - The patient's, relatives' and guardian's names, the employer name, street address, phone numbers, e-mail, PRN, SSN and insurance/ID numbers are replaced with tokens like `[PATIENT]` and `[CONTACT_1]`.
 - DOB becomes an age, and all full dates are shifted by a secret random number of days, so intervals still make sense.
 - If any known identifier is still found in the text, **nothing is sent** and the note-based boxes stay blank.
-- Claude's answers come back with tokens and shifted dates, which are swapped back on the computer.
+- The AI's answers come back with tokens and shifted dates, which are swapped back on the computer. They are also checked against the form's allowed answers; anything unexpected is left blank.
 
 Known limits:
 - Doctor and facility names, and month/year-only dates (e.g. "03/2026"), stay in the text.
@@ -178,8 +191,8 @@ Known limits:
 Hence the BAA recommendation.
 
 Other notes:
-- The API key and settings are stored only in this Chrome profile (`chrome.storage.local`).
-- The extension only has access to `static.practicefusion.com` (to read the open chart) and `api.anthropic.com` (only when AI is on). It also uses Chrome's downloads permission so **Download PDF** can save the file.
+- API keys and settings are stored only in this Chrome profile (`chrome.storage.local`).
+- The extension only has access to `practicefusion.com` pages (to read the open chart) and `api.anthropic.com` / `api.deepseek.com` (only the one you chose, and only when AI is on). It also uses Chrome's downloads permission so **Download PDF** can save the file.
 - The extension uses Practice Fusion's own, **undocumented** web endpoints, the same ones its screens use. A future Practice Fusion update could break reading the chart until the extension is updated. Check Practice Fusion's terms of use for your practice.
 
 ---
@@ -188,10 +201,10 @@ Other notes:
 
 | Problem | Fix |
 |---|---|
-| No **📝 Fill a form** button | It only appears on a patient's chart, where the address contains `/charts/patients/`. Reload the Practice Fusion tab after installing or updating. Check the extension is switched on in `chrome://extensions`. |
+| No **📝 Fill a form** button | 1. Make sure a **patient chart** is open (Charts → click the patient); the address contains `/charts/patients/`. 2. Look at the **bottom-left** of the window: on smaller screens the button floats there. 3. Click the toolbar icon or press **Alt+Shift+F**; these work even without the button. 4. Open **Settings → Check setup**. It shows whether the extension may run on Practice Fusion (**Grant access** if not) and whether the button is active in your open tabs (**Fix now** if not). 5. Make sure you're in the same Chrome profile where the extension was installed, that it's switched on in `chrome://extensions`, and that Chrome is version 115 or newer. 6. On a work computer, IT policy may block extensions on some sites; Check setup will say "Not allowed to run". |
 | "Practice Fusion says you are not logged in" | Your session timed out. Log in again in the Practice Fusion tab, reopen the chart, and click the button again. |
 | "Could not read the Practice Fusion tab" | Keep the Practice Fusion chart tab open while the filler tab works. Click the button again from the chart. |
-| "Claude was not used: …" | The message says why: bad key, model not found, rate limit, or Claude declining. The PDF is still made with the chart-based fields; fill the rest by hand or try again. |
+| "Claude was not used: …" or "DeepSeek was not used: …" | The message says why: bad key, model not found, no balance, rate limit, or the AI declining. The PDF is still made with the chart-based fields; fill the rest by hand or try again. |
 | Text looks too small in a box | The tool shrinks long answers to fit. Click the box in the PDF and shorten the text. |
 | The DOL/WMATA/DDS publishes a new version of a form | Positions on flat forms are measured for the current versions (WH-380-E rev. June 2020; MetroAccess 50.295 05/24; DDS Medical Evaluation). A new layout needs the coordinates in `src/forms/*.js` updated. |
 
@@ -205,10 +218,13 @@ src/
   content.js/.css      adds the "Fill a form" button inside Practice Fusion
   background.js        opens the filler tab for the current chart
   app.html/.js/.css    the filler tab (read chart → choose form → generate → review)
-  options.html/.js     settings page
+  options.html/.js     settings page (incl. AI provider and Check setup)
   lib/extract.js       reads the chart (runs inside the Practice Fusion tab)
   lib/deid.js          de-identify / re-identify
   lib/ai.js            Claude call (Anthropic TypeScript SDK, JSON-schema structured output)
+  lib/deepseek.js      DeepSeek call (OpenAI-format Chat Completions, JSON Output mode)
+  lib/providers.js     picks the AI provider from Settings
+  lib/answers.js       validates AI answers against each form's questions (both providers)
   lib/pdf.js           fills existing PDF fields or adds new editable fields on flat PDFs
   lib/pipeline.js      chart → de-identify → Claude → re-identify → PDF
   forms/*.js           one module per form: AI questions, suggestion rule, field positions
@@ -226,11 +242,13 @@ Run the offline test. It fills every form from the synthetic charts with and wit
 npm run build && npm test
 ```
 
-The offline end-to-end test loads the **built extension** into Chromium against a stand-in Practice Fusion page that serves the synthetic charts. It needs no login, security code or API key. It needs Playwright (`npm i -D playwright && npx playwright install chromium`).
+The offline end-to-end test loads the **built extension** into Chromium against a stand-in Practice Fusion page that serves the synthetic charts. It covers both AI providers (mocked), the button fallback on cramped screens, the toolbar badge and Check setup. It needs no login, security code or API key. It needs Playwright (`npm i -D playwright && npx playwright install chromium`).
 
 ```bash
 npm run build && npm run e2e:offline
 ```
+
+To test an older Chrome, download it from [Chrome for Testing](https://googlechromelabs.github.io/chrome-for-testing/) and run with `CHROMIUM_PATH=/path/to/chrome npm run e2e:offline`.
 
 The live end-to-end test loads the built extension into Chromium, logs in to a Practice Fusion **test** account, opens the synthetic patients, clicks the button, and generates each form with the Claude API **mocked**. It needs Playwright (`npm i -D playwright && npx playwright install chromium`).
 

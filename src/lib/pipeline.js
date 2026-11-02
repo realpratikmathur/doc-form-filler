@@ -1,4 +1,4 @@
-// chart -> (de-identify -> Claude -> re-identify) -> filled, editable PDF
+// chart -> (de-identify -> AI (Claude or DeepSeek) -> re-identify) -> filled, editable PDF
 import { deidentify, reidentify } from './deid.js';
 
 /**
@@ -18,9 +18,9 @@ export async function generateForm({ form, chart, templateBytes, settings, askAi
     const { payload, secret, leaks } = deidentify(chart);
     aiInfo.payload = payload;
     if (leaks.length) {
-      aiInfo.error = 'An identifier was still present after de-identification, so nothing was sent to Claude. Note-based fields are left blank.';
+      aiInfo.error = 'An identifier was still present after de-identification, so nothing was sent to the AI. Note-based fields are left blank.';
     } else {
-      onStep('Asking Claude to answer the note-based questions (de-identified data only)…');
+      onStep('Asking the AI to answer the note-based questions (de-identified data only)…');
       try {
         const r = await askAi({ form, payload });
         ai = reidentify(r.answers, secret);

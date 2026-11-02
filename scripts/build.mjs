@@ -18,7 +18,7 @@ await mkdir(path.join(dist, 'forms'), { recursive: true });
 await mkdir(cache, { recursive: true });
 
 // 1. JavaScript
-const common = { bundle: true, target: 'chrome116', legalComments: 'none', logLevel: 'warning', minify: false };
+const common = { bundle: true, target: 'chrome115', legalComments: 'none', logLevel: 'warning', minify: false };
 await build({ ...common, entryPoints: ['app.js', 'options.js', 'background.js'].map(f => path.join(src, f)), outdir: dist, format: 'esm', splitting: false });
 await build({ ...common, entryPoints: [path.join(src, 'content.js')], outdir: dist, format: 'iife' });
 

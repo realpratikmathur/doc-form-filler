@@ -8,11 +8,21 @@
     label.f { display: block; margin: 10px 0 2px; font-weight: 600; font-size: 14px; }
     input[type=text], input[type=password], select { width: 100%; max-width: 480px; padding: 8px; font-size: 14px; border: 1px solid #c7d0db; border-radius: 6px; box-sizing: border-box; }
     .hint { font-size: 12px; color: #5b6876; margin: 2px 0 0; }
+    .provider { display: block; margin: 6px 0; font-size: 14px; }
+    .check-row { display: flex; gap: 8px; align-items: baseline; margin: 6px 0; font-size: 14px; }
+    .ok { color: #0a7a3d; font-weight: 700; } .bad { color: #b42318; font-weight: 700; } .warn { color: #8a5a00; font-weight: 700; }
   </style>
 </head>
 <body>
-  <header><h1>📝 Doc Form Filler — Settings</h1></header>
+  <header><h1>📝 Doc Form Filler — Settings</h1><span id="version" class="muted" style="color:#dbe7f5"></span></header>
   <main>
+    <section class="card" id="setup">
+      <h2>Check setup</h2>
+      <p class="muted">Use this if the "📝 Fill a form" button doesn't appear on a patient chart.</p>
+      <div id="checks"><p class="muted">Checking…</p></div>
+      <button id="recheck" type="button">Check again</button>
+    </section>
+
     <section class="card">
       <h2>Your details for the forms</h2>
       <p class="muted">Name, practice address, phone and e-mail come from Practice Fusion automatically. Fill in what Practice Fusion doesn't store. Saved only in this Chrome profile.</p>
@@ -30,15 +40,34 @@
       <h2>AI drafting of note-based answers (optional)</h2>
       <p class="muted">Without AI, the extension fills everything that is stored as data in the chart (names, dates, diagnoses with codes,
         medications, allergies, vitals, contacts) and leaves note-based answers blank. With AI, a <b>de-identified</b> copy of the chart
-        (no names, IDs, addresses, phone numbers, or real dates) is sent to Anthropic's Claude to draft those answers.
-        Use an Anthropic account covered by a HIPAA Business Associate Agreement before using real patient charts.</p>
-      <label><input id="aiEnabled" type="checkbox"> Use Claude to draft note-based answers</label>
-      <label class="f" for="anthropicApiKey">Anthropic API key</label><input id="anthropicApiKey" type="password" placeholder="sk-ant-...">
-      <p class="hint">Create one at console.anthropic.com → API keys. Stored only in this Chrome profile.</p>
-      <label class="f" for="model">Claude model</label>
-      <select id="model"><option value="">— enter the API key, then click "Load models" —</option></select>
-      <button id="load-models" type="button">Load models</button>
-      <p id="model-status" class="hint"></p>
+        (no names, IDs, addresses, phone numbers, or real dates) is sent to the AI you choose to draft those answers.</p>
+      <label><input id="aiEnabled" type="checkbox"> Use AI to draft note-based answers</label>
+
+      <p style="margin:14px 0 4px;font-weight:600">AI provider</p>
+      <label class="provider"><input type="radio" name="aiProvider" value="anthropic"> Claude (Anthropic)</label>
+      <label class="provider"><input type="radio" name="aiProvider" value="deepseek"> DeepSeek</label>
+
+      <div id="anthropic-box">
+        <p class="hint">Use an Anthropic account covered by a HIPAA Business Associate Agreement before using real patient charts.</p>
+        <label class="f" for="anthropicApiKey">Anthropic API key</label><input id="anthropicApiKey" type="password" placeholder="sk-ant-...">
+        <p class="hint">Create one at console.anthropic.com → API keys. Stored only in this Chrome profile.</p>
+        <label class="f" for="model">Claude model</label>
+        <select id="model"><option value="">— enter the API key, then click "Load models" —</option></select>
+        <button id="load-models" type="button">Load models</button>
+        <p id="model-status" class="hint"></p>
+      </div>
+
+      <div id="deepseek-box" class="hidden">
+        <p class="notice"><b>Privacy note:</b> DeepSeek is a company based in China and processes API requests on its servers there.
+          It does not advertise HIPAA Business Associate Agreements. The extension sends DeepSeek only the de-identified copy of the chart,
+          but automatic de-identification of free-text notes is never perfect. Check with your compliance advisor before using it with real patient charts.</p>
+        <label class="f" for="deepseekApiKey">DeepSeek API key</label><input id="deepseekApiKey" type="password" placeholder="sk-...">
+        <p class="hint">Create one at platform.deepseek.com → API keys. Stored only in this Chrome profile.</p>
+        <label class="f" for="deepseekModel">DeepSeek model</label>
+        <select id="deepseekModel"><option value="">— enter the API key, then click "Load models" —</option></select>
+        <button id="load-deepseek-models" type="button">Load models</button>
+        <p id="deepseek-model-status" class="hint"></p>
+      </div>
     </section>
 
     <button id="save" type="button" class="primary">Save settings</button> <span id="saved" class="muted"></span>
